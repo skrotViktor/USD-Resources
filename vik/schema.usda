@@ -1,0 +1,50 @@
+#usda 1.0
+(
+    """ This file contains an example schemata for code generation using
+        usdGenSchema.
+    """
+    subLayers = [
+        @usd/schema.usda@
+    ]
+)
+
+over "GLOBAL" (
+    customData = {
+        string libraryName       = "hairProc"
+        string libraryPath       = "."
+        bool useLiteralIdentifier = 0
+    }
+) {}
+
+class "HairProceduralAPI"
+(
+    inherits = </APISchemaBase>
+    doc = """API for procedurally deforming a groom to an animated geometry. Apply this API to the hair geometry.
+    Required attributes:
+        - target: The animated geometry
+        - capt:prim: The prim each strand should attach to on the target
+        - capt:uv: The barycentric coordinates of the prim each strand should attach to on the target
+    """
+)
+{
+    rel target (
+        customData = {
+            string apiName = "target"
+        }
+        doc = """The target on to which the hairs should attach to"""
+    )
+
+    int[] capt:prim = [] (
+        customData = {
+            string apiName = "prim"
+        }
+        doc = """The prim on the target that each strand shhould attach to"""
+    )
+
+    float2[] capt:uv = [] (
+        customData = {
+            string apiName = "uv"
+        }
+        doc = """The barycentric coordnates (vec3f) that the strand should attach to on the prim"""
+    )
+}
