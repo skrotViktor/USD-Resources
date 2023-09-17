@@ -64,8 +64,14 @@ void wrapHairProcTokens()
 {
     boost::python::class_<HairProcTokensType, boost::noncopyable>
         cls("Tokens", boost::python::no_init);
-    _AddToken(cls, "captPrim", HairProcTokens->captPrim);
-    _AddToken(cls, "captUv", HairProcTokens->captUv);
-    _AddToken(cls, "target", HairProcTokens->target);
+    _AddToken(cls, "hairprocCaptPrim", HairProcTokens->hairprocCaptPrim);
+    _AddToken(cls, "hairprocCaptTarget", HairProcTokens->hairprocCaptTarget);
+    _AddToken(cls, "hairprocCaptUv", HairProcTokens->hairprocCaptUv);
+    _AddToken(cls, "hairProcedural", HairProcTokens->hairProcedural);
+    _AddToken(cls, "hairprocTargets", HairProcTokens->hairprocTargets);
+    _AddToken(cls, "hydraGenerativeProcedural", HairProcTokens->hydraGenerativeProcedural);
+    _AddToken(cls, "primvarsHdGpProceduralType", HairProcTokens->primvarsHdGpProceduralType);
+    _AddToken(cls, "proceduralSystem", HairProcTokens->proceduralSystem);
+    _AddToken(cls, "HairProcedural", HairProcTokens->HairProcedural);
     _AddToken(cls, "HairProceduralAPI", HairProcTokens->HairProceduralAPI);
 }

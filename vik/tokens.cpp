@@ -26,14 +26,26 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 HairProcTokensType::HairProcTokensType() :
-    captPrim("capt:prim", TfToken::Immortal),
-    captUv("capt:uv", TfToken::Immortal),
-    target("target", TfToken::Immortal),
+    hairprocCaptPrim("hairproc:capt:prim", TfToken::Immortal),
+    hairprocCaptTarget("hairproc:capt:target", TfToken::Immortal),
+    hairprocCaptUv("hairproc:capt:uv", TfToken::Immortal),
+    hairProcedural("HairProcedural", TfToken::Immortal),
+    hairprocTargets("hairproc:targets", TfToken::Immortal),
+    hydraGenerativeProcedural("hydraGenerativeProcedural", TfToken::Immortal),
+    primvarsHdGpProceduralType("primvars:hdGp:proceduralType", TfToken::Immortal),
+    proceduralSystem("proceduralSystem", TfToken::Immortal),
+    HairProcedural("HairProcedural", TfToken::Immortal),
     HairProceduralAPI("HairProceduralAPI", TfToken::Immortal),
     allTokens({
-        captPrim,
-        captUv,
-        target,
+        hairprocCaptPrim,
+        hairprocCaptTarget,
+        hairprocCaptUv,
+        hairProcedural,
+        hairprocTargets,
+        hydraGenerativeProcedural,
+        primvarsHdGpProceduralType,
+        proceduralSystem,
+        HairProcedural,
         HairProceduralAPI
     })
 {

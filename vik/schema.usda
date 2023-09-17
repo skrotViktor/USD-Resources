@@ -4,7 +4,7 @@
         usdGenSchema.
     """
     subLayers = [
-        @usd/schema.usda@
+        @usdProc/schema.usda@
     ]
 )
 
@@ -27,24 +27,57 @@ class "HairProceduralAPI"
     """
 )
 {
-    rel target (
+    rel hairproc:capt:target (
         customData = {
             string apiName = "target"
         }
         doc = """The target on to which the hairs should attach to"""
     )
 
-    int[] capt:prim = [] (
+    int[] hairproc:capt:prim = [] (
         customData = {
             string apiName = "prim"
         }
         doc = """The prim on the target that each strand shhould attach to"""
     )
 
-    float2[] capt:uv = [] (
+    float2[] hairproc:capt:uv = [] (
         customData = {
             string apiName = "uv"
         }
         doc = """The barycentric coordnates (vec3f) that the strand should attach to on the prim"""
+    )
+}
+
+class HairProcedural "HairProcedural"
+(
+    inherits = </GenerativeProcedural>
+    doc = """Prim definition wrapping HydraGenerativeProcedural. Defines the prim which is run at render time"""
+)
+{
+    rel hairproc:targets (
+        customData = {
+            string apiName = "targets"
+        }
+        doc = """The hair prims to deform. The targets should have HairProceduralAPI applied"""
+    )
+    token primvars:hdGp:proceduralType = "HairProcedural"(
+        doc = """The registered name of a HdGpGenerativeProceduralPlugin to
+        be executed."""
+
+        customData = {
+            string apiName = "proceduralType"
+        }
+    )
+
+    token proceduralSystem = "hydraGenerativeProcedural" (
+        doc = """
+        This value should correspond to a configured instance of
+        HdGpGenerativeProceduralResolvingSceneIndex which will evaluate the
+        procedural. The default value of "hydraGenerativeProcedural" matches
+        the equivalent default of HdGpGenerativeProceduralResolvingSceneIndex.
+        Multiple instances of the scene index can be used to determine where
+        within a scene index chain a given procedural will be evaluated.
+        """
     )
 }

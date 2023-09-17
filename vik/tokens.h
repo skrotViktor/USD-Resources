@@ -58,22 +58,46 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// Use HairProcTokens like so:
 ///
 /// \code
-///     gprim.GetMyTokenValuedAttr().Set(HairProcTokens->captPrim);
+///     gprim.GetMyTokenValuedAttr().Set(HairProcTokens->hairprocCaptPrim);
 /// \endcode
 struct HairProcTokensType {
     HAIRPROC_API HairProcTokensType();
-    /// \brief "capt:prim"
+    /// \brief "hairproc:capt:prim"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken captPrim;
-    /// \brief "capt:uv"
+    const TfToken hairprocCaptPrim;
+    /// \brief "hairproc:capt:target"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken captUv;
-    /// \brief "target"
+    const TfToken hairprocCaptTarget;
+    /// \brief "hairproc:capt:uv"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken target;
+    const TfToken hairprocCaptUv;
+    /// \brief "HairProcedural"
+    /// 
+    /// Fallback value for HairProcHairProcedural::GetProceduralTypeAttr()
+    const TfToken hairProcedural;
+    /// \brief "hairproc:targets"
+    /// 
+    /// HairProcHairProcedural
+    const TfToken hairprocTargets;
+    /// \brief "hydraGenerativeProcedural"
+    /// 
+    /// Fallback value for HairProcHairProcedural::GetProceduralSystemAttr()
+    const TfToken hydraGenerativeProcedural;
+    /// \brief "primvars:hdGp:proceduralType"
+    /// 
+    /// HairProcHairProcedural
+    const TfToken primvarsHdGpProceduralType;
+    /// \brief "proceduralSystem"
+    /// 
+    /// HairProcHairProcedural
+    const TfToken proceduralSystem;
+    /// \brief "HairProcedural"
+    /// 
+    /// Schema identifer and family for HairProcHairProcedural
+    const TfToken HairProcedural;
     /// \brief "HairProceduralAPI"
     /// 
     /// Schema identifer and family for HairProcHairProceduralAPI

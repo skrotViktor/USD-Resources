@@ -105,13 +105,13 @@ HairProcHairProceduralAPI::_GetTfType() const
 UsdAttribute
 HairProcHairProceduralAPI::GetPrimAttr() const
 {
-    return GetPrim().GetAttribute(HairProcTokens->captPrim);
+    return GetPrim().GetAttribute(HairProcTokens->hairprocCaptPrim);
 }
 
 UsdAttribute
 HairProcHairProceduralAPI::CreatePrimAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(HairProcTokens->captPrim,
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairprocCaptPrim,
                        SdfValueTypeNames->IntArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
@@ -122,13 +122,13 @@ HairProcHairProceduralAPI::CreatePrimAttr(VtValue const &defaultValue, bool writ
 UsdAttribute
 HairProcHairProceduralAPI::GetUvAttr() const
 {
-    return GetPrim().GetAttribute(HairProcTokens->captUv);
+    return GetPrim().GetAttribute(HairProcTokens->hairprocCaptUv);
 }
 
 UsdAttribute
 HairProcHairProceduralAPI::CreateUvAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(HairProcTokens->captUv,
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairprocCaptUv,
                        SdfValueTypeNames->Float2Array,
                        /* custom = */ false,
                        SdfVariabilityVarying,
@@ -139,13 +139,13 @@ HairProcHairProceduralAPI::CreateUvAttr(VtValue const &defaultValue, bool writeS
 UsdRelationship
 HairProcHairProceduralAPI::GetTargetRel() const
 {
-    return GetPrim().GetRelationship(HairProcTokens->target);
+    return GetPrim().GetRelationship(HairProcTokens->hairprocCaptTarget);
 }
 
 UsdRelationship
 HairProcHairProceduralAPI::CreateTargetRel() const
 {
-    return GetPrim().CreateRelationship(HairProcTokens->target,
+    return GetPrim().CreateRelationship(HairProcTokens->hairprocCaptTarget,
                        /* custom = */ false);
 }
 
@@ -166,8 +166,8 @@ const TfTokenVector&
 HairProcHairProceduralAPI::GetSchemaAttributeNames(bool includeInherited)
 {
     static TfTokenVector localNames = {
-        HairProcTokens->captPrim,
-        HairProcTokens->captUv,
+        HairProcTokens->hairprocCaptPrim,
+        HairProcTokens->hairprocCaptUv,
     };
     static TfTokenVector allNames =
         _ConcatenateAttributeNames(

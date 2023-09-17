@@ -175,7 +175,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `int[] capt:prim = []` |
+    /// | Declaration | `int[] hairproc:capt:prim = []` |
     /// | C++ Type | VtArray<int> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->IntArray |
     HAIRPROC_API
@@ -197,7 +197,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `float2[] capt:uv = []` |
+    /// | Declaration | `float2[] hairproc:capt:uv = []` |
     /// | C++ Type | VtArray<GfVec2f> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2Array |
     HAIRPROC_API

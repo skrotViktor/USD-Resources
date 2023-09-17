@@ -1,4 +1,6 @@
 from pxr import Usd, UsdGeom, Sdf
+from pxr import UsdProc 
+
 from vik import HairProc
 import numpy as np
 
@@ -59,7 +61,6 @@ def build_hair(stage, target, count=100):
     indices = target.GetFaceVertexIndicesAttr().Get()
     counts = target.GetFaceVertexCountsAttr().Get()
     
-    # l = np.linspace(0, len(counts), count)
     l = count / len(counts)
     curve_cnt = [2] * count
     curve_pts = np.zeros((count * 2, 3))
@@ -87,27 +88,31 @@ def build_hair(stage, target, count=100):
 
         roots = np.zeros((li, 3), dtype=np.float64)
         for j in range(li):
-            
             curve_uvs.append((r[j][0], r[j][1]))
             roots[j] = np.sum((e.T * r[j]).T + p[0], -2) / (c-1)
         tips = roots + n
-        curve_pts.put(range(total, total + li * 6), np.stack((roots, tips), -2))
-        
+
+        curve_pts.put(range(total, total + li * 6), np.stack((roots, tips), -2))        
         curve_prm += [i] * li
 
         offset += c
         total += li * 6
 
-    hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path("/hair"))
+    hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path("/hair/curves"))
     hair.CreatePointsAttr(curve_pts)
     hair.CreateCurveVertexCountsAttr(curve_cnt)
     hair.CreateWidthsAttr(curve_w)
     hair.CreateTypeAttr("linear")
 
+    proc = HairProc.HairProcedural.Define(stage, Sdf.Path("/hair/proc"))
+    proc_rel = proc.CreateTargetsRel()
+    proc_rel.AddTarget(hair.GetPath())
+
     api = HairProc.HairProceduralAPI.Apply(hair.GetPrim())
     api.CreatePrimAttr(curve_prm)
     api.CreateUvAttr(curve_uvs)
-    
+    rel = api.CreateTargetRel()
+    rel.SetTargets([target.GetPath()])
     return hair
 
 
@@ -117,7 +122,7 @@ def do_stuffs(stage):
 
 
 if __name__ == "__main__":
-    stage_name = "teststage.usda"
+    stage_name = "hairProc.usda"
 
     stage = open_stage(stage_name)
     do_stuffs(stage)
