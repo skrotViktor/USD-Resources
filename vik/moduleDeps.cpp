@@ -13,7 +13,7 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader) {
         TfToken("sdf"),
         TfToken("tf"),
         TfToken("usd"),
-        TfToken("vt")
+        TfToken("vt"),
     };
     TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("hairProc"), TfToken("vik.HairProc"), reqs);
 }

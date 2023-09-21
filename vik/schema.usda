@@ -4,7 +4,7 @@
         usdGenSchema.
     """
     subLayers = [
-        @usdProc/schema.usda@
+        @usd/schema.usda@
     ]
 )
 
@@ -41,43 +41,17 @@ class "HairProceduralAPI"
         doc = """The prim on the target that each strand shhould attach to"""
     )
 
+    vector3f[] hairproc:capt:up = [] (
+        customData = {
+            string apiName = "up"
+        }
+        doc = """The capture up vector of the target geometry"""
+    ) 
+
     float2[] hairproc:capt:uv = [] (
         customData = {
             string apiName = "uv"
         }
         doc = """The barycentric coordnates (vec3f) that the strand should attach to on the prim"""
-    )
-}
-
-class HairProcedural "HairProcedural"
-(
-    inherits = </GenerativeProcedural>
-    doc = """Prim definition wrapping HydraGenerativeProcedural. Defines the prim which is run at render time"""
-)
-{
-    rel hairproc:targets (
-        customData = {
-            string apiName = "targets"
-        }
-        doc = """The hair prims to deform. The targets should have HairProceduralAPI applied"""
-    )
-    token primvars:hdGp:proceduralType = "HairProcedural"(
-        doc = """The registered name of a HdGpGenerativeProceduralPlugin to
-        be executed."""
-
-        customData = {
-            string apiName = "proceduralType"
-        }
-    )
-
-    token proceduralSystem = "hydraGenerativeProcedural" (
-        doc = """
-        This value should correspond to a configured instance of
-        HdGpGenerativeProceduralResolvingSceneIndex which will evaluate the
-        procedural. The default value of "hydraGenerativeProcedural" matches
-        the equivalent default of HdGpGenerativeProceduralResolvingSceneIndex.
-        Multiple instances of the scene index can be used to determine where
-        within a scene index chain a given procedural will be evaluated.
-        """
     )
 }

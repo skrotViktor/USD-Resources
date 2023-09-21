@@ -58,6 +58,13 @@ _CreatePrimAttr(HairProcHairProceduralAPI &self,
 }
         
 static UsdAttribute
+_CreateUpAttr(HairProcHairProceduralAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreateUpAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray), writeSparsely);
+}
+        
+static UsdAttribute
 _CreateUvAttr(HairProcHairProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
     return self.CreateUvAttr(
@@ -131,6 +138,13 @@ void wrapHairProcHairProceduralAPI()
              &This::GetPrimAttr)
         .def("CreatePrimAttr",
              &_CreatePrimAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
+        
+        .def("GetUpAttr",
+             &This::GetUpAttr)
+        .def("CreateUpAttr",
+             &_CreateUpAttr,
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
         

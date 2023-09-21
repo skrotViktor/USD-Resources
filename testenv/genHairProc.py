@@ -1,5 +1,4 @@
 from pxr import Usd, UsdGeom, Sdf
-from pxr import UsdProc 
 
 from vik import HairProc
 import numpy as np
@@ -67,6 +66,7 @@ def build_hair(stage, target, count=100):
     curve_w = [5.0] * count * 2
     curve_prm = []
     curve_uvs = []
+    curve_ups = []
 
     total = 0
     carried = 0
@@ -89,6 +89,7 @@ def build_hair(stage, target, count=100):
         roots = np.zeros((li, 3), dtype=np.float64)
         for j in range(li):
             curve_uvs.append((r[j][0], r[j][1]))
+            curve_ups.append(n)
             roots[j] = np.sum((e.T * r[j]).T + p[0], -2) / (c-1)
         tips = roots + n
 
@@ -104,13 +105,10 @@ def build_hair(stage, target, count=100):
     hair.CreateWidthsAttr(curve_w)
     hair.CreateTypeAttr("linear")
 
-    proc = HairProc.HairProcedural.Define(stage, Sdf.Path("/hair/proc"))
-    proc_rel = proc.CreateTargetsRel()
-    proc_rel.AddTarget(hair.GetPath())
-
     api = HairProc.HairProceduralAPI.Apply(hair.GetPrim())
     api.CreatePrimAttr(curve_prm)
     api.CreateUvAttr(curve_uvs)
+    api.CreateUpAttr(curve_ups)
     rel = api.CreateTargetRel()
     rel.SetTargets([target.GetPath()])
     return hair
@@ -119,11 +117,41 @@ def build_hair(stage, target, count=100):
 def do_stuffs(stage):
     tube = build_tube(stage)
     hair = build_hair(stage, tube)
+    animate(stage, tube)
 
+
+def animate(stage, prim, samples=10, speed=2):
+    frames = [1001, 1100]
+    stage.SetStartTimeCode(frames[0])
+    stage.SetEndTimeCode(frames[1])
+    stage.SetFramesPerSecond(24)
+
+    pts_attr = prim.GetPointsAttr()
+    pts = np.array(pts_attr.Get())
+
+    step = (frames[1] - frames[0]) / samples
+    frame = frames[0]
+
+    def _func(v, t):
+        x = v[0] * np.cos(t) - v[2] * np.sin(t)
+        y = v[1]
+        z = v[0] * np.sin(t) + v[2] * np.cos(t)
+        return np.array((x, y, z))
+
+    vf = np.vectorize(_func, signature="(n)->(n)")
+    vf.excluded.add("t")
+
+    for sample in range(samples+1):
+        # s = (sample/samples) * np.pi * 2 * speed
+        # rot = np.array((np.sin(s), 0, np.cos(s)))
+        # pts = vf(v=pts, t=0.5)
+        pts += np.array((np.sin(sample), 0, 0))
+        pts_attr.Set(pts, frame)
+        frame += step
 
 if __name__ == "__main__":
-    stage_name = "hairProc.usda"
-
+    stage_name = os.path.join(os.path.dirname(__file__), "hairProc.usda")
+    
     stage = open_stage(stage_name)
     do_stuffs(stage)
     stage.Export(stage_name)

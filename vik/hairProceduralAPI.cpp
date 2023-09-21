@@ -120,6 +120,23 @@ HairProcHairProceduralAPI::CreatePrimAttr(VtValue const &defaultValue, bool writ
 }
 
 UsdAttribute
+HairProcHairProceduralAPI::GetUpAttr() const
+{
+    return GetPrim().GetAttribute(HairProcTokens->hairprocCaptUp);
+}
+
+UsdAttribute
+HairProcHairProceduralAPI::CreateUpAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairprocCaptUp,
+                       SdfValueTypeNames->Vector3fArray,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
+}
+
+UsdAttribute
 HairProcHairProceduralAPI::GetUvAttr() const
 {
     return GetPrim().GetAttribute(HairProcTokens->hairprocCaptUv);
@@ -167,6 +184,7 @@ HairProcHairProceduralAPI::GetSchemaAttributeNames(bool includeInherited)
 {
     static TfTokenVector localNames = {
         HairProcTokens->hairprocCaptPrim,
+        HairProcTokens->hairprocCaptUp,
         HairProcTokens->hairprocCaptUv,
     };
     static TfTokenVector allNames =

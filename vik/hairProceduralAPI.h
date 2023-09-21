@@ -191,6 +191,28 @@ public:
 
 public:
     // --------------------------------------------------------------------- //
+    // UP 
+    // --------------------------------------------------------------------- //
+    /// The capture up vector of the target geometry
+    ///
+    /// | ||
+    /// | -- | -- |
+    /// | Declaration | `vector3f[] hairproc:capt:up = []` |
+    /// | C++ Type | VtArray<GfVec3f> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Vector3fArray |
+    HAIRPROC_API
+    UsdAttribute GetUpAttr() const;
+
+    /// See GetUpAttr(), and also 
+    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+    /// If specified, author \p defaultValue as the attribute's default,
+    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+    /// the default for \p writeSparsely is \c false.
+    HAIRPROC_API
+    UsdAttribute CreateUpAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+
+public:
+    // --------------------------------------------------------------------- //
     // UV 
     // --------------------------------------------------------------------- //
     /// The barycentric coordnates (vec3f) that the strand should attach to on the prim

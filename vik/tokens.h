@@ -70,34 +70,14 @@ struct HairProcTokensType {
     /// 
     /// HairProcHairProceduralAPI
     const TfToken hairprocCaptTarget;
+    /// \brief "hairproc:capt:up"
+    /// 
+    /// HairProcHairProceduralAPI
+    const TfToken hairprocCaptUp;
     /// \brief "hairproc:capt:uv"
     /// 
     /// HairProcHairProceduralAPI
     const TfToken hairprocCaptUv;
-    /// \brief "HairProcedural"
-    /// 
-    /// Fallback value for HairProcHairProcedural::GetProceduralTypeAttr()
-    const TfToken hairProcedural;
-    /// \brief "hairproc:targets"
-    /// 
-    /// HairProcHairProcedural
-    const TfToken hairprocTargets;
-    /// \brief "hydraGenerativeProcedural"
-    /// 
-    /// Fallback value for HairProcHairProcedural::GetProceduralSystemAttr()
-    const TfToken hydraGenerativeProcedural;
-    /// \brief "primvars:hdGp:proceduralType"
-    /// 
-    /// HairProcHairProcedural
-    const TfToken primvarsHdGpProceduralType;
-    /// \brief "proceduralSystem"
-    /// 
-    /// HairProcHairProcedural
-    const TfToken proceduralSystem;
-    /// \brief "HairProcedural"
-    /// 
-    /// Schema identifer and family for HairProcHairProcedural
-    const TfToken HairProcedural;
     /// \brief "HairProceduralAPI"
     /// 
     /// Schema identifer and family for HairProcHairProceduralAPI
