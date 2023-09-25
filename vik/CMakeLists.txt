@@ -63,6 +63,13 @@ configure_file(
     @ONLY
 )
 
+target_compile_definitions(${USDPLUGIN_NAME}
+    PRIVATE
+        MFB_PACKAGE_NAME=${USDPLUGIN_NAME}
+        MFB_ALT_PACKAGE_NAME=${USDPLUGIN_NAME}
+        MFB_PACKAGE_MODULE=${MODULE_NAME}
+)
+
 install(
     FILES ${CMAKE_BINARY_DIR}/plugInfo.json
     DESTINATION "lib/usd/${USDPLUGIN_NAME}/resources"

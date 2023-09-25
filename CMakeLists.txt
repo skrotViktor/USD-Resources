@@ -16,9 +16,12 @@ set(MODULE_NAME
     "${LIBNAME_FL}${LIBNAME_SUFFIX}"
 )
 
+set(USDIMAGINGGL_ENGINE_ENABLE_SCENE_INDEX true)
+
 set(USD_INSTALL_ROOT /opt/USD)
 set(CMAKE_INSTALL_PREFIX "/opt/USD_resources" CACHE PATH "..." FORCE)
 
-add_definitions(-D_GLIBCXX_USE_CXX_ABI=0)
+# add_definitions(-D_GLIBCXX_USE_CXX_ABI=0)
+# add_definitions(-DUSDIMAGINGGL_ENGINE_ENABLE_SCENE_INDEX=true)
 
 add_subdirectory(vik)

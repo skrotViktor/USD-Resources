@@ -15,24 +15,24 @@
                             "UsdAPISchemaBase"
                         ], 
                         "schemaKind": "singleApplyAPI"
-                    },
+                    }, 
+                    "HairProcHairProceduralAPIAdapter": {
+                        "apiSchemaName": "HairProceduralAPI", 
+                        "bases": [
+                            "UsdImagingAPISchemaAdapter"
+                        ], 
+                        "isInternal": true
+                    }, 
                     "HairProcHairProceduralSceneIndexPlugin": {
                         "bases": [
                             "HdSceneIndexPlugin"
                         ], 
                         "displayName": "Scene Index to execute HairProc", 
                         "loadWithRenderer": "", 
-                        "priority": 0
-                    }, 
-                    "HairProcHairProceduralAPIAdapter": {
-                        "bases": [
-                            "UsdImagingAPISchemaAdapter"
-                        ], 
-                        "apiSchemaName": "HairProceduralAPI", 
-                        "isInternal": true
+                        "priority": 1
                     }
                 }
-            }, 
+            },
             "LibraryPath": "@PLUG_INFO_LIBRARY_PATH@", 
             "Name": "hairProc", 
             "ResourcePath": "@PLUG_INFO_RESOURCE_PATH@", 

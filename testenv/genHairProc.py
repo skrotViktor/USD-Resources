@@ -55,7 +55,7 @@ def build_tube(stage, sides=5, radius=1, height=2):
     return mesh
 
 
-def build_hair(stage, target, count=100):
+def build_hair(stage, target, count=100, path="/hair/curves", apply_api=True):
     pts = target.GetPointsAttr().Get()
     indices = target.GetFaceVertexIndicesAttr().Get()
     counts = target.GetFaceVertexCountsAttr().Get()
@@ -99,24 +99,31 @@ def build_hair(stage, target, count=100):
         offset += c
         total += li * 6
 
-    hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path("/hair/curves"))
+    hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path(path))
     hair.CreatePointsAttr(curve_pts)
     hair.CreateCurveVertexCountsAttr(curve_cnt)
     hair.CreateWidthsAttr(curve_w)
     hair.CreateTypeAttr("linear")
 
-    api = HairProc.HairProceduralAPI.Apply(hair.GetPrim())
-    api.CreatePrimAttr(curve_prm)
-    api.CreateUvAttr(curve_uvs)
-    api.CreateUpAttr(curve_ups)
-    rel = api.CreateTargetRel()
-    rel.SetTargets([target.GetPath()])
+    if apply_api:
+        api = HairProc.HairProceduralAPI.Apply(hair.GetPrim())
+        api.CreatePrimAttr(curve_prm)
+        api.CreateUvAttr(curve_uvs)
+        api.CreateUpAttr(curve_ups)
+        rel = api.CreateTargetRel()
+        rel.SetTargets([target.GetPath()])
+
+        assert(hair.GetPrim().HasAPI("HairProceduralAPI"))
+        assert(hair.GetPrim().HasAPI(HairProc.HairProceduralAPI))
+
     return hair
 
 
 def do_stuffs(stage):
     tube = build_tube(stage)
-    hair = build_hair(stage, tube)
+    build_hair(stage, tube, path="/curves")
+    build_hair(stage, tube, path="/no_api_curves", apply_api=False)
+
     animate(stage, tube)
 
 

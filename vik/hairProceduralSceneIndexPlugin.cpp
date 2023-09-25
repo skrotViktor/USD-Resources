@@ -1,6 +1,8 @@
 
 #include "pxr/imaging/hd/sceneIndexPluginRegistry.h"
 
+#include "pxr/base/tf/envSetting.h"
+
 #include "hairProceduralSceneIndexPlugin.h"
 #include "hairProceduralSceneIndex.h"
 #include <string>
@@ -17,14 +19,16 @@ TF_REGISTRY_FUNCTION(TfType) {
 }
 
 TF_REGISTRY_FUNCTION(HdSceneIndexPlugin) {
-    const HdSceneIndexPluginRegistry::InsertionPhase insertionPhase = 1;
-
     HdSceneIndexPluginRegistry::GetInstance().RegisterSceneIndexForRenderer(
-        "", _tokens->sceneIndexPluginName, nullptr, insertionPhase, HdSceneIndexPluginRegistry::InsertionOrderAtStart);
+        TfToken(),
+        _tokens->sceneIndexPluginName,
+        nullptr,
+        0, // insertion phase
+        HdSceneIndexPluginRegistry::InsertionOrderAtStart);
 }
 
 HairProcHairProceduralSceneIndexPlugin::HairProcHairProceduralSceneIndexPlugin() = default;
-// HairProcHairProceduralSceneIndexPlugin::~HairProcHairProceduralSceneIndexPlugin() = default;
+HairProcHairProceduralSceneIndexPlugin::~HairProcHairProceduralSceneIndexPlugin() = default;
 
 HdSceneIndexBaseRefPtr
 HairProcHairProceduralSceneIndexPlugin::_AppendSceneIndex(
@@ -32,8 +36,7 @@ HairProcHairProceduralSceneIndexPlugin::_AppendSceneIndex(
         const HdContainerDataSourceHandle& inputArgs) {
     
     TF_UNUSED(inputArgs);
-    std::cout<<"HELLO FROM APPEND" <<std::endl;
-    return HairProcHairProceduralSceneIndex::New(inputSceneIndex, inputArgs);
+    return HairProcHairProceduralSceneIndex::New(inputSceneIndex);
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

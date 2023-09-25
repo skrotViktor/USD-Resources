@@ -18,8 +18,7 @@ class HairProcHairProceduralSceneIndex : public HdSingleInputFilteringSceneIndex
 public:
     HAIRPROC_API
     static HairProcHairProceduralSceneIndexRefPtr New(
-        const HdSceneIndexBaseRefPtr& inputSceneIdndex, 
-        const HdContainerDataSourceHandle& inputArgs=nullptr);
+        const HdSceneIndexBaseRefPtr& inputSceneIdndex);
 
     HAIRPROC_API
     HdSceneIndexPrim GetPrim(const SdfPath& primPath) const override;
@@ -29,7 +28,6 @@ public:
 
 protected:
     HairProcHairProceduralSceneIndex(const HdSceneIndexBaseRefPtr& inputSceneIndex);
-
     void _PrimsAdded(const HdSceneIndexBase& sender, const HdSceneIndexObserver::AddedPrimEntries& entries) override;
 
     void _PrimsRemoved(const HdSceneIndexBase& sender, const HdSceneIndexObserver::RemovedPrimEntries& entried) override;
@@ -37,7 +35,6 @@ protected:
     void _PrimsDirtied(const HdSceneIndexBase& sender, const HdSceneIndexObserver::DirtiedPrimEntries& entries) override;
 
 private:
-
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

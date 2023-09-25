@@ -58,26 +58,26 @@ PXR_NAMESPACE_OPEN_SCOPE
 /// Use HairProcTokens like so:
 ///
 /// \code
-///     gprim.GetMyTokenValuedAttr().Set(HairProcTokens->hairprocCaptPrim);
+///     gprim.GetMyTokenValuedAttr().Set(HairProcTokens->prim);
 /// \endcode
 struct HairProcTokensType {
     HAIRPROC_API HairProcTokensType();
-    /// \brief "hairproc:capt:prim"
+    /// \brief "prim"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken hairprocCaptPrim;
-    /// \brief "hairproc:capt:target"
+    const TfToken prim;
+    /// \brief "target"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken hairprocCaptTarget;
-    /// \brief "hairproc:capt:up"
+    const TfToken target;
+    /// \brief "up"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken hairprocCaptUp;
-    /// \brief "hairproc:capt:uv"
+    const TfToken up;
+    /// \brief "uv"
     /// 
     /// HairProcHairProceduralAPI
-    const TfToken hairprocCaptUv;
+    const TfToken uv;
     /// \brief "HairProceduralAPI"
     /// 
     /// Schema identifer and family for HairProcHairProceduralAPI

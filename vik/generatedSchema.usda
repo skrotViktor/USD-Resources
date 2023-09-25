@@ -12,16 +12,16 @@ class "HairProceduralAPI" (
     """
 )
 {
-    int[] hairproc:capt:prim = [] (
+    int[] prim = [] (
         doc = "The prim on the target that each strand shhould attach to"
     )
-    rel hairproc:capt:target (
+    rel target (
         doc = "The target on to which the hairs should attach to"
     )
-    vector3f[] hairproc:capt:up = [] (
+    vector3f[] up = [] (
         doc = "The capture up vector of the target geometry"
     )
-    float2[] hairproc:capt:uv = [] (
+    float2[] uv = [] (
         doc = "The barycentric coordnates (vec3f) that the strand should attach to on the prim"
     )
 }

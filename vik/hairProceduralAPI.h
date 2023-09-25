@@ -175,7 +175,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `int[] hairproc:capt:prim = []` |
+    /// | Declaration | `int[] prim = []` |
     /// | C++ Type | VtArray<int> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->IntArray |
     HAIRPROC_API
@@ -197,7 +197,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `vector3f[] hairproc:capt:up = []` |
+    /// | Declaration | `vector3f[] up = []` |
     /// | C++ Type | VtArray<GfVec3f> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Vector3fArray |
     HAIRPROC_API
@@ -219,7 +219,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `float2[] hairproc:capt:uv = []` |
+    /// | Declaration | `float2[] uv = []` |
     /// | C++ Type | VtArray<GfVec2f> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2Array |
     HAIRPROC_API
