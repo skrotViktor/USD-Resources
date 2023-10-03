@@ -1,13 +1,11 @@
-#ifndef HAIRPROC_PROCEDURALSCENEINDEX_H
-#define HAIRPROC_PROCEDURALSCENEINDEX_H
+#ifndef HAIRPROC_PROCEDURAL_SCENEINDEX_H
+#define HAIRPROC_PROCEDURAL_SCENEINDEX_H
 
 #include "pxr/pxr.h"
 #include "pxr/imaging/hd/filteringSceneIndex.h"
-#include "pxr/usdImaging/usdImaging/stageSceneIndex.h"
-#include "pxr/imaging/hd/primvarSchema.h"
-#include "pxr/imaging/hd/meshSchema.h"
 
-#include "./api.h"
+#include "hairProceduralDeformer.h"
+#include "api.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -35,6 +33,17 @@ protected:
     void _PrimsDirtied(const HdSceneIndexBase& sender, const HdSceneIndexObserver::DirtiedPrimEntries& entries) override;
 
 private:
+    void _init_deformer(
+        const SdfPath& primPath,
+        HairProcHairProceduralSchema& procSchema,
+        HdBasisCurvesSchema& basisCurvesSchema,
+        HdPrimvarsSchema& primvarSchema);
+
+    typedef std::map<SdfPath, std::unordered_set<SdfPath, SdfPath::Hash>> _TargetsMap;
+    mutable _TargetsMap _targets;
+
+    typedef std::unordered_map<SdfPath, HairProcHairProceduralDeformerSharedPtr, SdfPath::Hash> _HairProcMap;
+    mutable _HairProcMap _deformerMap;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

@@ -1,17 +1,12 @@
-#include "./hairProceduralSceneIndex.h"
-#include "./tokens.h"
-#include "./hairProceduralSchema.h"
+
+#include "hairProceduralDataSources.h"
+#include "hairProceduralSceneIndex.h"
+#include "tokens.h"
 
 #include "pxr/pxr.h"
-#include "pxr/imaging/hd/filteringSceneIndex.h"
-#include "pxr/usdImaging/usdImaging/stageSceneIndex.h"
-#include "pxr/imaging/hd/primvarsSchema.h"
-#include "pxr/imaging/hd/basisCurvesSchema.h"
 #include "pxr/imaging/hd/tokens.h"
 
-#include "pxr/imaging/hd/tokens.h"
-
-
+#include <memory>
 #include <iostream>
 
 PXR_NAMESPACE_OPEN_SCOPE
@@ -25,51 +20,22 @@ HairProcHairProceduralSceneIndex::HairProcHairProceduralSceneIndex(const HdScene
         : HdSingleInputFilteringSceneIndexBase(inputSceneIndex) {}
 
 
-class _PrimvarDataSource final : public HdContainerDataSource
-{
-public:
-    HD_DECLARE_DATASOURCE(_PrimvarDataSource);
-
-    TfTokenVector GetNames() override {
-        return {HdPrimvarSchemaTokens->primvarValue,
-                HdPrimvarSchemaTokens->interpolation,
-                HdPrimvarSchemaTokens->role};
-    }
-
-    HdDataSourceBaseHandle Get(const TfToken &name) override {
-        if (name == HdPrimvarSchemaTokens->primvarValue) {
-            return _primvarValueSrc;
-        }
-        if (name == HdPrimvarSchemaTokens->interpolation) {
-            return
-                HdPrimvarSchema::BuildInterpolationDataSource(
-                    _interpolation);
-        }
-        if (name == HdPrimvarSchemaTokens->role) {
-            return
-                HdPrimvarSchema::BuildRoleDataSource(
-                    _role);
-        }
-
-        return nullptr;
-    }
-
-private:
-    _PrimvarDataSource(
-        const HdDataSourceBaseHandle &primvarValueSrc,
-        const TfToken &interpolation,
-        const TfToken &role)
-      : _primvarValueSrc(primvarValueSrc)
-      , _interpolation(interpolation)
-      , _role(role){}
-
-    HdDataSourceBaseHandle _primvarValueSrc;
-    TfToken _interpolation;
-    TfToken _role;
-};
-
 HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPath) const {
     HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(primPath);
+    if (prim.primType == HdPrimTypeTokens->basisCurves) {
+
+        HdBasisCurvesSchema curveSchema = HdBasisCurvesSchema::GetFromParent(prim.dataSource);
+        HdPrimvarsSchema primvarSchema = HdPrimvarsSchema::GetFromParent(prim.dataSource);
+        HairProcHairProceduralSchema hairProcSchema = HairProcHairProceduralSchema::GetFromParent(prim.dataSource);
+
+        if (curveSchema && primvarSchema && hairProcSchema) {            
+            if (auto deformer = _deformerMap.find(primPath); deformer != _deformerMap.end()) {
+                // If deformer is applied to this prim. The deformer gets applied on _primsAdded
+                prim.dataSource = _HairProcDataSource::New(primPath, prim.dataSource, deformer->second);
+            }
+        }
+    }
+
     return prim;
 }
 
@@ -87,17 +53,17 @@ HairProcHairProceduralSceneIndex::_PrimsAdded(
     }
     for (const HdSceneIndexObserver::AddedPrimEntry& entry: entries) {
         if (entry.primType == HdPrimTypeTokens->basisCurves) {
-            auto prim = _GetInputSceneIndex()->GetPrim(entry.primPath);
 
+            auto prim = _GetInputSceneIndex()->GetPrim(entry.primPath);
             HdBasisCurvesSchema curveSchema = HdBasisCurvesSchema::GetFromParent(prim.dataSource);
             HdPrimvarsSchema primvarSchema = HdPrimvarsSchema::GetFromParent(prim.dataSource);
             HairProcHairProceduralSchema hairProcSchema = HairProcHairProceduralSchema::GetFromParent(prim.dataSource);
+
             if (curveSchema && primvarSchema && hairProcSchema) {
-                std::cout<< entry.primPath << std::endl;
+                _init_deformer(entry.primPath, hairProcSchema, curveSchema, primvarSchema);
             }
         }
     }
-
     _SendPrimsAdded(entries);
 }
 
@@ -105,6 +71,9 @@ void
 HairProcHairProceduralSceneIndex::_PrimsRemoved(
         const HdSceneIndexBase& sender,
         const HdSceneIndexObserver::RemovedPrimEntries& entries) {
+    if (!_IsObserved()) {
+        return;
+    }
     _SendPrimsRemoved(entries);
 }
 
@@ -116,7 +85,49 @@ HairProcHairProceduralSceneIndex::_PrimsDirtied(
         return;
     }
 
-    _SendPrimsDirtied(entries);
+    HdSceneIndexObserver::DirtiedPrimEntries dirty = entries;
+
+    for (const HdSceneIndexObserver::DirtiedPrimEntry& entry: entries) {
+        if (auto it = _targets.find(entry.primPath); it != _targets.end()) {
+            
+            for (const SdfPath& path : it->second) {
+
+                auto prim = _GetInputSceneIndex()->GetPrim(path);
+                HdPrimvarsSchema primvarSchema = HdPrimvarsSchema::GetFromParent(prim.dataSource);
+                dirty.emplace_back(path, primvarSchema.GetPointsLocator());
+            }
+        }
+    }
+
+    _SendPrimsDirtied(dirty);
+}
+
+void HairProcHairProceduralSceneIndex::_init_deformer(
+        const SdfPath& primPath,
+        HairProcHairProceduralSchema& procSchema,
+        HdBasisCurvesSchema& basisCurvesSchema,
+        HdPrimvarsSchema& primvarSchema){
+
+    HdPathArrayDataSourceHandle target = procSchema.GetTarget();
+    VtArray<SdfPath> targets = target->GetTypedValue(0);
+    if (!targets.size()) {
+        return;
+    }
+
+    HdIntArrayDataSourceHandle prim = procSchema.GetPrim();
+    HdVec2fArrayDataSourceHandle uv = procSchema.GetUv();
+    HdVec3fArrayDataSourceHandle up = procSchema.GetUp();
+
+    HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(
+        targets,
+        up->GetTypedValue(0),
+        uv->GetTypedValue(0),
+        prim->GetTypedValue(0));
+
+    _deformerMap[primPath] = deformer;
+    for (SdfPath& path : targets) {
+        _targets[path].insert(primPath);
+    }
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE

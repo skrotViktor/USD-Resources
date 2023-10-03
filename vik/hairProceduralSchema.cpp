@@ -58,12 +58,10 @@ const TfToken& HairProcHairProceduralSchema::GetSchemaToken() {
 }
 
 HairProcHairProceduralSchema
-HairProcHairProceduralSchema::GetFromParent(const HdContainerDataSourceHandle& parent) {
-    // std::cout<<parent->Get(HairProcTokens->HairProceduralAPI)<<std::endl;
-    
+HairProcHairProceduralSchema::GetFromParent(const HdContainerDataSourceHandle& parent) {    
     return HairProcHairProceduralSchema(
         parent 
-        ? HdContainerDataSource::Cast(parent->Get(HairProcTokens->HairProceduralAPI))
+        ? HdContainerDataSource::Cast(parent->Get(HairProcHairProceduralSchemaTokens->hairProcedural))
         : nullptr);
 }
 
