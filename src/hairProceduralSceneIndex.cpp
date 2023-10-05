@@ -30,7 +30,6 @@ HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPa
 
         if (curveSchema && primvarSchema && hairProcSchema) {            
             if (auto deformer = _deformerMap.find(primPath); deformer != _deformerMap.end()) {
-                // If deformer is applied to this prim. The deformer gets applied on _primsAdded
                 prim.dataSource = _HairProcDataSource::New(primPath, prim.dataSource, deformer->second);
             }
         }
@@ -81,6 +80,8 @@ void
 HairProcHairProceduralSceneIndex::_PrimsDirtied(
         const HdSceneIndexBase& sender,
         const HdSceneIndexObserver::DirtiedPrimEntries& entries) {
+
+    // If any prims in entries are part of _targets, we need to also dirty their sources, ie the hairProcedural prims
     if (!_IsObserved()) {
         return;
     }
@@ -89,7 +90,6 @@ HairProcHairProceduralSceneIndex::_PrimsDirtied(
 
     for (const HdSceneIndexObserver::DirtiedPrimEntry& entry: entries) {
         if (auto it = _targets.find(entry.primPath); it != _targets.end()) {
-            
             for (const SdfPath& path : it->second) {
 
                 auto prim = _GetInputSceneIndex()->GetPrim(path);
@@ -118,8 +118,15 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
     HdVec2fArrayDataSourceHandle uv = procSchema.GetUv();
     HdVec3fArrayDataSourceHandle up = procSchema.GetUp();
 
+    VtArray<HdSampledDataSourceHandle> targetPts;
+    for (auto it: targets) {
+        HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(it);
+        HdPrimvarsSchema targetPrimvar = HdPrimvarsSchema::GetFromParent(prim.dataSource);
+        targetPts.push_back(targetPrimvar.GetPrimvar(HdTokens->points).GetPrimvarValue());
+    }
+
     HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(
-        targets,
+        targetPts,
         up->GetTypedValue(0),
         uv->GetTypedValue(0),
         prim->GetTypedValue(0));

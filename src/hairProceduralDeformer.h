@@ -6,6 +6,8 @@
 #include "pxr/base/vt/value.h"
 #include "pxr/imaging/hd/basisCurvesSchema.h"
 #include "pxr/imaging/hd/primvarsSchema.h"
+#include "pxr/imaging/hd/sceneIndex.h"
+
 
 #include "hairProceduralSchema.h"
 
@@ -18,24 +20,18 @@ TF_DECLARE_REF_PTRS(HairProcHairProceduralDeformer);
 
 class HairProcHairProceduralDeformer {
 public:
-    HairProcHairProceduralDeformer(VtArray<SdfPath> target, VtVec3fArray up, VtVec2fArray uv, VtIntArray prim);
-    ~HairProcHairProceduralDeformer(){}
+    HairProcHairProceduralDeformer(VtArray<HdSampledDataSourceHandle> targetPtsHandle, VtVec3fArray up, VtVec2fArray uv, VtIntArray prim);
+    ~HairProcHairProceduralDeformer() {};
 
-    VtVec3fArray deform(const VtVec3fArray& pts) {
-        std::cout<< "DEFORM" << std::endl;
-        // std::cout<< "target: " << _target.size()<<std::endl;
-        // std::cout<< "up: " << _up.size()<<std::endl;
-        // std::cout<< "uv: " << _uv.size()<<std::endl;
-        // std::cout<< "prim: " << _prim.size()<<std::endl;
-
-        return pts;
-    }
+    VtVec3fArray Deform(const VtVec3fArray& pts, const HdSampledDataSource::Time& shutterOffset) const;
 
 private:
-    VtArray<SdfPath> _target;
+    VtArray<HdSampledDataSourceHandle> _targetPtsHandle;
     VtVec3fArray _up;
     VtVec2fArray _uv;
     VtIntArray _prim;
+
+    // VtMatrix3fArray _ComputeFrames() {}
 };
 
 using HairProcHairProceduralDeformerSharedPtr = std::shared_ptr<class HairProcHairProceduralDeformer>;
