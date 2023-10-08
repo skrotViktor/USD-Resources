@@ -11,15 +11,7 @@
 #include "hairProceduralSchema.h"
 #include "api.h"
 
-#define CL_HPP_TARGET_OPENCL_VERSION 120
-#define CL_HPP_MINIMUM_OPENCL_VERSION 120
-
-#ifdef __APPLE__
-    #include "opencl.hpp"
-#else
-    #include <CL/cl.hpp>
-#endif
-
+#include "ocl/DeformerContext.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -28,12 +20,12 @@ TF_DECLARE_REF_PTRS(HairProcHairProceduralDeformer);
 class HairProcHairProceduralDeformer {
 public:
     HairProcHairProceduralDeformer(VtArray<HdSampledDataSourceHandle> targetPtsHandle, VtVec3fArray up, VtVec2fArray uv, VtIntArray prim);
-    ~HairProcHairProceduralDeformer() {};
+    // ~HairProcHairProceduralDeformer() {delete _oclContext; };
 
     VtVec3fArray Deform(const VtVec3fArray& pts, const HdSampledDataSource::Time& shutterOffset) const;
-    
-    const bool _InitOCL() const;
-    const bool _IsOCLInitialized() const;
+
+    const bool InitOCL();
+    const bool IsOCLInitialized() const;
 
 private:
     VtArray<HdSampledDataSourceHandle> _targetPtsHandle;
@@ -41,7 +33,7 @@ private:
     VtVec2fArray _uv;
     VtIntArray _prim;
 
-    cl::Device* _oclDevice = nullptr;
+    std::shared_ptr<ocl::DeformerContext> _oclContext;
 
     VtVec3fArray _DeformOCL(const VtVec3fArray& pts, const HdSampledDataSource::Time& shutterOffset) const;
     VtVec3fArray _Deform(const VtVec3fArray& pts, const HdSampledDataSource::Time& shutterOffset) const {return pts;}

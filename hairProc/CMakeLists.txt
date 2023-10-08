@@ -6,28 +6,26 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(USDPLUGIN_NAME hairProc)
 set(PYPACKAGE_NAME vik)
+set(OCLMODULE_NAME ocl)
 
-# PY MODULE NAME
-string(SUBSTRING ${USDPLUGIN_NAME} 0 1 LIBNAME_FL)
-string(SUBSTRING ${USDPLUGIN_NAME} 0 1 LIBNAME_FL)
-string(TOUPPER ${LIBNAME_FL} LIBNAME_FL)
-string(SUBSTRING ${USDPLUGIN_NAME} 1 -1 LIBNAME_SUFFIX)
-set(MODULE_NAME
-    "${LIBNAME_FL}${LIBNAME_SUFFIX}"
-)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set(USDIMAGINGGL_ENGINE_ENABLE_SCENE_INDEX true)
 
 set(USD_INSTALL_ROOT /opt/USD)
 set(CMAKE_INSTALL_PREFIX "/opt/USD_resources" CACHE PATH "..." FORCE)
 
-# add_definitions(-D_GLIBCXX_USE_CXX_ABI=0)
-# add_definitions(-DUSDIMAGINGGL_ENGINE_ENABLE_SCENE_INDEX=true)
+add_definitions(-D_GLIBCXX_USE_CXX_ABI=0)
 
-add_subdirectory(src)
+add_subdirectory(usd)
+add_subdirectory(ocl)
 
-file(GLOB OCL "ocl/*.cl")
-install(
-    FILES ${OCL}
-    DESTINATION "ocl"
-)
+if(${APPLE})
+    target_link_options(
+        ${USDPLUGIN_NAME}
+        PRIVATE -framework OpenCL
+    )
+endif()
+

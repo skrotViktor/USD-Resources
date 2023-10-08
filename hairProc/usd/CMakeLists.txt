@@ -7,18 +7,10 @@ set(PLUG_INFO_LIBRARY_PATH "../../${USDPLUGIN_NAME}.dylib")
 set(PLUG_INFO_RESOURCE_PATH "resources")
 set(PLUG_INFO_ROOT "..")
 
-set(CMAKE_SKIP_BUILD_RPATH FALSE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-add_compile_definitions(OCL_FILE_PATH="${CMAKE_INSTALL_PREFIX}/ocl")
-set(OPENCL_CLHPP_HEADERS_DIR ../ocl)
-
 set(CONFIGURATION_SOURCE ${CMAKE_CURRENT_LIST_DIR}/cmake/config.cmake)
 set(CONFIGURATION_TARGET ${CMAKE_CURRENT_BINARY_DIR}/${USDPLUGIN_NAME}Config.cmake)
 
-find_package(PythonLibs 3.7 REQUIRED)  # Needed for `PYTHON_INCLUDE_PATH`
-find_package(OpenCL REQUIRED)
+find_package(PythonLibs 3.7 REQUIRED)
 
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
@@ -26,6 +18,15 @@ list(FILTER sources EXCLUDE REGEX "./module*|./wrap*")
 
 file(GLOB module_sources "module*.cpp")
 file(GLOB wrap_sources "wrap*.cpp")
+
+# PY MODULE NAME
+string(SUBSTRING ${USDPLUGIN_NAME} 0 1 LIBNAME_FL)
+string(SUBSTRING ${USDPLUGIN_NAME} 0 1 LIBNAME_FL)
+string(TOUPPER ${LIBNAME_FL} LIBNAME_FL)
+string(SUBSTRING ${USDPLUGIN_NAME} 1 -1 LIBNAME_SUFFIX)
+set(MODULE_NAME
+    "${LIBNAME_FL}${LIBNAME_SUFFIX}"
+)
 
 # MODULE LIBRARY
 add_library(${USDPLUGIN_NAME}
@@ -38,7 +39,7 @@ install(
     FILES
         ${headers}
     DESTINATION
-        include
+        include/usd
 )
 
 set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${USD_INSTALL_ROOT})
@@ -48,12 +49,12 @@ target_include_directories(${USDPLUGIN_NAME}
     PRIVATE
         ${PYTHON_INCLUDE_PATH}
         ${PXR_INCLUDE_DIRS}
-        ${OPENCL_CLHPP_HEADERS_DIR}
+        ".."
 )
 
 target_link_libraries(${USDPLUGIN_NAME}
     ${PXR_LIBRARIES}
-    ${OpenCL_LIBRARIES}
+    ${OCLMODULE_NAME}
 )
 
 set_target_properties(${USDPLUGIN_NAME} PROPERTIES PREFIX "")
@@ -120,6 +121,7 @@ install(
 )
 
 # PYTHON
+
 set(USDPLUGIN_PYTHON_NAME _${USDPLUGIN_NAME})
 
 add_library(${USDPLUGIN_PYTHON_NAME}

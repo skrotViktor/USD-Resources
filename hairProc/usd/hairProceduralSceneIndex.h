@@ -1,7 +1,6 @@
 #ifndef HAIRPROC_PROCEDURAL_SCENEINDEX_H
 #define HAIRPROC_PROCEDURAL_SCENEINDEX_H
 
-#include "pxr/pxr.h"
 #include "pxr/imaging/hd/filteringSceneIndex.h"
 
 #include "hairProceduralDeformer.h"
