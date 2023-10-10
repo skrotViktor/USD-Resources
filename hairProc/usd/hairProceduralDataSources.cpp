@@ -31,8 +31,7 @@ VtValue _PointsDataSource::GetValue(const Time shutterOffset) {
 VtVec3fArray _PointsDataSource::GetTypedValue(const Time shutterOffset) {
     if (HdPrimvarSchema depPrimvar = _schema.GetPrimvar(HdTokens->points)) {
         HdSampledDataSourceHandle ds = depPrimvar.GetPrimvarValue();
-        VtVec3fArray pts = ds->GetValue(shutterOffset).UncheckedGet<VtArray<GfVec3f>>();
-        return _deformer->Deform(pts, shutterOffset);
+        return _deformer->Deform(shutterOffset);
     }
     return VtVec3fArray();
 }

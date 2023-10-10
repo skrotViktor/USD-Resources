@@ -53,8 +53,9 @@ target_include_directories(${USDPLUGIN_NAME}
 )
 
 target_link_libraries(${USDPLUGIN_NAME}
-    ${PXR_LIBRARIES}
-    ${OCLMODULE_NAME}
+    PUBLIC
+        ${PXR_LIBRARIES}
+        ${OCLMODULE_NAME}
 )
 
 set_target_properties(${USDPLUGIN_NAME} PROPERTIES PREFIX "")

@@ -4,6 +4,8 @@ find_package(OpenCL REQUIRED)
 
 add_compile_definitions(OCL_FILE_PATH="${CMAKE_INSTALL_PREFIX}/ocl/kernels")
 
+set(OPENCL_CLHPP_HEADERS_DIR .)
+
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 
@@ -14,14 +16,16 @@ install(
     DESTINATION "ocl"
 )
 
-# MODULE LIBRARY
+# OCL LIBRARY
 add_library(${OCLMODULE_NAME}
-    ${headers}
-    ${sources}
+    SHARED
+        ${headers}
+        ${sources}
 )
 
 target_link_libraries(${OCLMODULE_NAME}
-    ${OpenCL_LIBRARIES}
+    PUBLIC
+        ${OpenCL_LIBRARIES}
 )
 
 install(
