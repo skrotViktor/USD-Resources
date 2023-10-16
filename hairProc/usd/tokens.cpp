@@ -26,16 +26,16 @@
 PXR_NAMESPACE_OPEN_SCOPE
 
 HairProcTokensType::HairProcTokensType() :
-    prim("prim", TfToken::Immortal),
-    target("target", TfToken::Immortal),
-    up("up", TfToken::Immortal),
-    uv("uv", TfToken::Immortal),
+    hairProcParamuv("hairProc:paramuv", TfToken::Immortal),
+    hairProcPrim("hairProc:prim", TfToken::Immortal),
+    hairProcRest("hairProc:rest", TfToken::Immortal),
+    hairProcTarget("hairProc:target", TfToken::Immortal),
     HairProceduralAPI("HairProceduralAPI", TfToken::Immortal),
     allTokens({
-        prim,
-        target,
-        up,
-        uv,
+        hairProcParamuv,
+        hairProcPrim,
+        hairProcRest,
+        hairProcTarget,
         HairProceduralAPI
     })
 {

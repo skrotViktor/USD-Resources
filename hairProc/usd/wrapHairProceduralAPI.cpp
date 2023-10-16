@@ -58,17 +58,17 @@ _CreatePrimAttr(HairProcHairProceduralAPI &self,
 }
         
 static UsdAttribute
-_CreateUpAttr(HairProcHairProceduralAPI &self,
+_CreateParamuvAttr(HairProcHairProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
-    return self.CreateUpAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Vector3fArray), writeSparsely);
+    return self.CreateParamuvAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2Array), writeSparsely);
 }
         
 static UsdAttribute
-_CreateUvAttr(HairProcHairProceduralAPI &self,
+_CreateRestAttr(HairProcHairProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
-    return self.CreateUvAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float2Array), writeSparsely);
+    return self.CreateRestAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->Float3Array), writeSparsely);
 }
 
 static std::string
@@ -141,17 +141,17 @@ void wrapHairProcHairProceduralAPI()
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
         
-        .def("GetUpAttr",
-             &This::GetUpAttr)
-        .def("CreateUpAttr",
-             &_CreateUpAttr,
+        .def("GetParamuvAttr",
+             &This::GetParamuvAttr)
+        .def("CreateParamuvAttr",
+             &_CreateParamuvAttr,
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
         
-        .def("GetUvAttr",
-             &This::GetUvAttr)
-        .def("CreateUvAttr",
-             &_CreateUvAttr,
+        .def("GetRestAttr",
+             &This::GetRestAttr)
+        .def("CreateRestAttr",
+             &_CreateRestAttr,
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
 

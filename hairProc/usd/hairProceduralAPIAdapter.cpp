@@ -20,8 +20,8 @@ TF_DEFINE_PRIVATE_TOKENS(
     (hairProcedural)
     (target)
     (prim)
-    (up)
-    (uv)
+    (paramuv)
+    (rest)
 );
 
 TF_REGISTRY_FUNCTION(TfType) {
@@ -108,8 +108,8 @@ public:
 
         result.push_back(_tokens->hairProcedural);
 
-        if (_api.GetUvAttr()) {
-            result.push_back(_tokens->uv);
+        if (_api.GetParamuvAttr()) {
+            result.push_back(_tokens->paramuv);
         }
         if (_api.GetPrimAttr()) {
             result.push_back(_tokens->prim);
@@ -117,15 +117,15 @@ public:
         if (_api.GetTargetRel()) {
             result.push_back(_tokens->target);
         }
-        if (_api.GetUpAttr()) {
-            result.push_back(_tokens->up);
+        if (_api.GetRestAttr()) {
+            result.push_back(_tokens->rest);
         }
         return result;
     }
 
     HdDataSourceBaseHandle Get(const TfToken& name) override {
-        if (name == _tokens->uv) {
-            if (UsdAttribute attr = _api.GetUvAttr()) {
+        if (name == _tokens->paramuv) {
+            if (UsdAttribute attr = _api.GetParamuvAttr()) {
                 return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
         }
@@ -134,9 +134,9 @@ public:
                 return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
         }
-        else if (name == _tokens->up) {
-            if (UsdAttribute attr = _api.GetUpAttr()) {
-                return HairProcHairProceduralUpDataSource::New(attr);
+        else if (name == _tokens->rest) {
+            if (UsdAttribute attr = _api.GetRestAttr()) {
+                return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
         }
         else if (name == _tokens->target) {

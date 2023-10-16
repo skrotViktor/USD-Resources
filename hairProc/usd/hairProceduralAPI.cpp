@@ -105,13 +105,13 @@ HairProcHairProceduralAPI::_GetTfType() const
 UsdAttribute
 HairProcHairProceduralAPI::GetPrimAttr() const
 {
-    return GetPrim().GetAttribute(HairProcTokens->prim);
+    return GetPrim().GetAttribute(HairProcTokens->hairProcPrim);
 }
 
 UsdAttribute
 HairProcHairProceduralAPI::CreatePrimAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(HairProcTokens->prim,
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairProcPrim,
                        SdfValueTypeNames->IntArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
@@ -120,16 +120,16 @@ HairProcHairProceduralAPI::CreatePrimAttr(VtValue const &defaultValue, bool writ
 }
 
 UsdAttribute
-HairProcHairProceduralAPI::GetUpAttr() const
+HairProcHairProceduralAPI::GetParamuvAttr() const
 {
-    return GetPrim().GetAttribute(HairProcTokens->up);
+    return GetPrim().GetAttribute(HairProcTokens->hairProcParamuv);
 }
 
 UsdAttribute
-HairProcHairProceduralAPI::CreateUpAttr(VtValue const &defaultValue, bool writeSparsely) const
+HairProcHairProceduralAPI::CreateParamuvAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(HairProcTokens->up,
-                       SdfValueTypeNames->Vector3fArray,
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairProcParamuv,
+                       SdfValueTypeNames->Float2Array,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -137,16 +137,16 @@ HairProcHairProceduralAPI::CreateUpAttr(VtValue const &defaultValue, bool writeS
 }
 
 UsdAttribute
-HairProcHairProceduralAPI::GetUvAttr() const
+HairProcHairProceduralAPI::GetRestAttr() const
 {
-    return GetPrim().GetAttribute(HairProcTokens->uv);
+    return GetPrim().GetAttribute(HairProcTokens->hairProcRest);
 }
 
 UsdAttribute
-HairProcHairProceduralAPI::CreateUvAttr(VtValue const &defaultValue, bool writeSparsely) const
+HairProcHairProceduralAPI::CreateRestAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(HairProcTokens->uv,
-                       SdfValueTypeNames->Float2Array,
+    return UsdSchemaBase::_CreateAttr(HairProcTokens->hairProcRest,
+                       SdfValueTypeNames->Float3Array,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -156,13 +156,13 @@ HairProcHairProceduralAPI::CreateUvAttr(VtValue const &defaultValue, bool writeS
 UsdRelationship
 HairProcHairProceduralAPI::GetTargetRel() const
 {
-    return GetPrim().GetRelationship(HairProcTokens->target);
+    return GetPrim().GetRelationship(HairProcTokens->hairProcTarget);
 }
 
 UsdRelationship
 HairProcHairProceduralAPI::CreateTargetRel() const
 {
-    return GetPrim().CreateRelationship(HairProcTokens->target,
+    return GetPrim().CreateRelationship(HairProcTokens->hairProcTarget,
                        /* custom = */ false);
 }
 
@@ -183,9 +183,9 @@ const TfTokenVector&
 HairProcHairProceduralAPI::GetSchemaAttributeNames(bool includeInherited)
 {
     static TfTokenVector localNames = {
-        HairProcTokens->prim,
-        HairProcTokens->up,
-        HairProcTokens->uv,
+        HairProcTokens->hairProcPrim,
+        HairProcTokens->hairProcParamuv,
+        HairProcTokens->hairProcRest,
     };
     static TfTokenVector allNames =
         _ConcatenateAttributeNames(

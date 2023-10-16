@@ -13,8 +13,8 @@ PXR_NAMESPACE_OPEN_SCOPE
     (hairProcedural) \
     (target) \
     (prim) \
-    (up) \
-    (uv) \
+    (paramuv) \
+    (rest) \
 
 TF_DECLARE_PUBLIC_TOKENS(HairProcHairProceduralSchemaTokens, HAIRPROC_API, HAIRPROC_SCHEMA_TOKENS);
 
@@ -23,16 +23,16 @@ public:
     HairProcHairProceduralSchema(HdContainerDataSourceHandle container) : HdSchema(container) {}
 
     HAIRPROC_API
-    HdVec2fArrayDataSourceHandle GetUv();
+    HdVec2fArrayDataSourceHandle GetParamuv();
 
     HAIRPROC_API
     HdPathArrayDataSourceHandle GetTarget();
 
     HAIRPROC_API
     HdIntArrayDataSourceHandle GetPrim();
-
+    
     HAIRPROC_API
-    HdVec3fArrayDataSourceHandle GetUp();
+    HdVec3fArrayDataSourceHandle GetRest();
 
     HAIRPROC_API
     static HairProcHairProceduralSchema GetFromParent(const HdContainerDataSourceHandle& parent);
@@ -44,46 +44,46 @@ public:
     static const HdDataSourceLocator& GetDefaultLocator();
 
     HAIRPROC_API
-    static const HdDataSourceLocator& GetUvLocator();
+    static const HdDataSourceLocator& GetParamuvLocator();
 
     HAIRPROC_API
     static const HdDataSourceLocator& GetTargetLocator();
 
     HAIRPROC_API
     static const HdDataSourceLocator& GetPrimLocator();
-
+    
     HAIRPROC_API
-    static const HdDataSourceLocator& GetUpLocator();
+    static const HdDataSourceLocator& GetRestLocator();
 
     HAIRPROC_API
     static HdContainerDataSourceHandle BuildRetained(
         const HdVec2fArrayDataSourceHandle& uv,
         const HdPathArrayDataSourceHandle& target,
         const HdIntArrayDataSourceHandle& prim,
-        const HdVec3fArrayDataSourceHandle& up);
+        const HdVec3fArrayDataSourceHandle& rest);
 
     class Builder {
     public:
         HAIRPROC_API
-        Builder& SetUv(const HdVec2fArrayDataSourceHandle& uv);
+        Builder& SetParamuv(const HdVec2fArrayDataSourceHandle& uv);
 
         HAIRPROC_API
         Builder& SetTarget(const HdPathArrayDataSourceHandle& target);
 
         HAIRPROC_API
         Builder& SetPrim(const HdIntArrayDataSourceHandle& prim);
-
+        
         HAIRPROC_API
-        Builder& SetUp(const HdVec3fArrayDataSourceHandle& up);
+        Builder& SetRest(const HdVec3fArrayDataSourceHandle& rest);
     
         HAIRPROC_API
         HdContainerDataSourceHandle Build();
 
     private:
-        HdVec2fArrayDataSourceHandle _uv;
+        HdVec2fArrayDataSourceHandle _paramuv;
         HdPathArrayDataSourceHandle _target;
         HdIntArrayDataSourceHandle _prim;
-        HdVec3fArrayDataSourceHandle _up;
+        HdVec3fArrayDataSourceHandle _rest;
     };
 };
 

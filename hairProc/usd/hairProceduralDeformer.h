@@ -4,6 +4,8 @@
 #include "pxr/pxr.h"
 #include "pxr/base/tf/declarePtrs.h"
 #include "pxr/base/vt/value.h"
+#include "pxr/base/gf/matrix3f.h"
+
 #include "pxr/imaging/hd/basisCurvesSchema.h"
 #include "pxr/imaging/hd/primvarsSchema.h"
 #include "pxr/imaging/hd/sceneIndex.h"
@@ -23,7 +25,7 @@ public:
     HairProcHairProceduralDeformer(VtArray<HdContainerDataSourceHandle> targetContainers,
                                    HdContainerDataSourceHandle sourceContainer);
 
-    VtVec3fArray Deform(const HdSampledDataSource::Time& shutterOffset) const;
+    VtVec3fArray Deform(const HdSampledDataSource::Time& shutterOffset);
 
     const bool InitOCL();
     const bool IsOCLInitialized() const;
@@ -32,10 +34,12 @@ private:
     VtArray<HdContainerDataSourceHandle> _targetContainers;
     HdContainerDataSourceHandle _sourceContainer;
 
-    std::shared_ptr<ocl::DeformerContext> _oclContext;
+    std::shared_ptr<ocl::DeformerContext> _oclContext = std::make_shared<ocl::DeformerContext>();
+    // std::shared_ptr<ocl::DeformerContext> _tgtContext;
 
-    VtVec3fArray _DeformOCL(const HdSampledDataSource::Time& shutterOffset) const;
-    VtVec3fArray _Deform(const HdSampledDataSource::Time& shutterOffset) const {return VtVec3fArray(); }
+    VtVec3fArray _DeformOCL(const HdSampledDataSource::Time& shutterOffset);
+    VtVec3fArray _Deform(const HdSampledDataSource::Time& shutterOffset) {return VtVec3fArray(); }
+    VtMatrix3fArray _CalcTargetFrames(const HdSampledDataSource::Time& shutterOffset, const bool invert, VtVec3fArray& pts);
 };
  
 using HairProcHairProceduralDeformerSharedPtr = std::shared_ptr<class HairProcHairProceduralDeformer>;

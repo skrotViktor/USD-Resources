@@ -113,11 +113,6 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
         return;
     }
 
-    // HdIntArrayDataSourceHandle prim = procSchema.GetPrim();
-    // HdVec2fArrayDataSourceHandle uv = procSchema.GetUv();
-    // HdVec3fArrayDataSourceHandle up = procSchema.GetUp();
-    // HdSampledDataSourceHandle   pos = primvarSchema.GetPrimvar(HdTokens->points).GetPrimvarValue();
-
     VtArray<HdContainerDataSourceHandle> targetDs;
     for (auto it: targets) {
         HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(it);
@@ -128,7 +123,7 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
     }
 
     HdContainerDataSourceHandle sourceDs = _GetInputSceneIndex()->GetPrim(primPath).dataSource;
-    
+
     HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(targetDs, sourceDs);
 
     if (deformer->IsOCLInitialized()) {

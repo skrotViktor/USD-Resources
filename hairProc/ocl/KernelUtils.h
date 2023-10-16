@@ -13,7 +13,7 @@
 namespace ocl::utils {
 
 // Load data from a file
-inline std::string LoadFile(const std::string_view& path) {
+inline std::string LoadClKernelSource(const std::string_view& path) {
     static std::string content;
 	std::ifstream filestream(path);
 
@@ -56,7 +56,7 @@ inline const std::vector<std::string> GetKernelPaths() {
     return result;
 }
 
-inline const std::string GetKernelByName(const std::string& name) {
+inline const std::string GetClFileByName(const std::string& name) {
     std::vector<std::string> paths = GetKernelPaths();
     if (paths.size() == 0) {
         std::cout<<"Failed: Could not find kernel paths"<< std::endl;
@@ -66,15 +66,13 @@ inline const std::string GetKernelByName(const std::string& name) {
     for (auto& it: paths) {
         std::string path = it + "/" + name;
         if (name.rfind(".cl") == std::string::npos) {
-            path += ".cl";
-            std::ifstream file(path);
+            std::ifstream file(path + ".cl");
             if (file.good()) {
                 return path;
             }
         }
         if (name.rfind(".ocl") == std::string::npos) {
-            path += ".ocl";
-            std::ifstream file(path);
+            std::ifstream file(path + ".ocl");
             if (file.good()) {
                 return path;
             }

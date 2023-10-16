@@ -5,11 +5,11 @@
 #include <iostream>
 
 PXR_NAMESPACE_OPEN_SCOPE
-// TF_DEFINE_PUBLIC_TOKENS(HairProcTokens, (hairProcedural));
+
 TF_DEFINE_PUBLIC_TOKENS(HairProcHairProceduralSchemaTokens, HAIRPROC_SCHEMA_TOKENS);
 
-HdVec2fArrayDataSourceHandle HairProcHairProceduralSchema::GetUv() {
-    return _GetTypedDataSource<HdVec2fArrayDataSource>(HairProcHairProceduralSchemaTokens->uv);
+HdVec2fArrayDataSourceHandle HairProcHairProceduralSchema::GetParamuv() {
+    return _GetTypedDataSource<HdVec2fArrayDataSource>(HairProcHairProceduralSchemaTokens->paramuv);
 }
 
 HdPathArrayDataSourceHandle HairProcHairProceduralSchema::GetTarget() {
@@ -20,23 +20,23 @@ HdIntArrayDataSourceHandle HairProcHairProceduralSchema::GetPrim() {
     return _GetTypedDataSource<HdIntArrayDataSource>(HairProcHairProceduralSchemaTokens->prim);
 }
 
-HdVec3fArrayDataSourceHandle HairProcHairProceduralSchema::GetUp() {
-    return _GetTypedDataSource<HdVec3fArrayDataSource>(HairProcHairProceduralSchemaTokens->up);
+HdVec3fArrayDataSourceHandle HairProcHairProceduralSchema::GetRest() {
+    return _GetTypedDataSource<HdVec3fArrayDataSource>(HairProcHairProceduralSchemaTokens->rest);
 }
 
 HdContainerDataSourceHandle HairProcHairProceduralSchema::BuildRetained(
-        const HdVec2fArrayDataSourceHandle& uv,
+        const HdVec2fArrayDataSourceHandle& paramuv,
         const HdPathArrayDataSourceHandle& target,
         const HdIntArrayDataSourceHandle& prim,
-        const HdVec3fArrayDataSourceHandle& up) {
+        const HdVec3fArrayDataSourceHandle& rest) {
 
     TfToken names[4];
     HdDataSourceBaseHandle values[4];
 
     size_t count = 0;
-    if (uv) {
-        names[count] = HairProcHairProceduralSchemaTokens->uv;
-        values[count++] = uv;
+    if (paramuv) {
+        names[count] = HairProcHairProceduralSchemaTokens->paramuv;
+        values[count++] = paramuv;
     }
     if (target) {
         names[count] = HairProcHairProceduralSchemaTokens->target;
@@ -46,9 +46,9 @@ HdContainerDataSourceHandle HairProcHairProceduralSchema::BuildRetained(
         names[count] = HairProcHairProceduralSchemaTokens->prim;
         values[count++] = prim;
     }
-    if (up) {
-        names[count] = HairProcHairProceduralSchemaTokens->up;
-        values[count++] = up;
+    if (rest) {
+        names[count] = HairProcHairProceduralSchemaTokens->rest;
+        values[count++] = prim;
     }
     return HdRetainedContainerDataSource::New(count, names, values);
 }
@@ -78,10 +78,10 @@ const HdDataSourceLocator& HairProcHairProceduralSchema::GetPrimLocator() {
     return locator;
 }
 
-const HdDataSourceLocator& HairProcHairProceduralSchema::GetUvLocator() {
+const HdDataSourceLocator& HairProcHairProceduralSchema::GetParamuvLocator() {
     static const HdDataSourceLocator locator(
         HairProcHairProceduralSchemaTokens->hairProcedural,
-        HairProcHairProceduralSchemaTokens->uv);
+        HairProcHairProceduralSchemaTokens->paramuv);
     return locator;
 }
 
@@ -92,16 +92,16 @@ const HdDataSourceLocator& HairProcHairProceduralSchema::GetTargetLocator() {
     return locator;
 }
 
-const HdDataSourceLocator& HairProcHairProceduralSchema::GetUpLocator() {
+const HdDataSourceLocator& HairProcHairProceduralSchema::GetRestLocator() {
     static const HdDataSourceLocator locator(
         HairProcHairProceduralSchemaTokens->hairProcedural,
-        HairProcHairProceduralSchemaTokens->up);
+        HairProcHairProceduralSchemaTokens->rest);
     return locator;
 }
 
 HairProcHairProceduralSchema::Builder&
-HairProcHairProceduralSchema::Builder::SetUv(const HdVec2fArrayDataSourceHandle& uv) {
-    _uv = uv;
+HairProcHairProceduralSchema::Builder::SetParamuv(const HdVec2fArrayDataSourceHandle& uv) {
+    _paramuv = uv;
     return *this;
 }
 
@@ -118,17 +118,17 @@ HairProcHairProceduralSchema::Builder::SetPrim(const HdIntArrayDataSourceHandle&
 }
 
 HairProcHairProceduralSchema::Builder&
-HairProcHairProceduralSchema::Builder::SetUp(const HdVec3fArrayDataSourceHandle& up) {
-    _up = up;
+HairProcHairProceduralSchema::Builder::SetRest(const HdVec3fArrayDataSourceHandle& rest) {
+    _rest = rest;
     return *this;
 }
 
 HdContainerDataSourceHandle HairProcHairProceduralSchema::Builder::Build() {
     return HairProcHairProceduralSchema::BuildRetained(
-        _uv,
+        _paramuv,
         _target,
         _prim,
-        _up
+        _rest
     );
 }
 

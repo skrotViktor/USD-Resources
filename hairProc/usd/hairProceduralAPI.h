@@ -175,7 +175,7 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `int[] prim = []` |
+    /// | Declaration | `int[] hairProc:prim = []` |
     /// | C++ Type | VtArray<int> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->IntArray |
     HAIRPROC_API
@@ -191,47 +191,47 @@ public:
 
 public:
     // --------------------------------------------------------------------- //
-    // UP 
-    // --------------------------------------------------------------------- //
-    /// The capture up vector of the target geometry
-    ///
-    /// | ||
-    /// | -- | -- |
-    /// | Declaration | `vector3f[] up = []` |
-    /// | C++ Type | VtArray<GfVec3f> |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Vector3fArray |
-    HAIRPROC_API
-    UsdAttribute GetUpAttr() const;
-
-    /// See GetUpAttr(), and also 
-    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
-    /// If specified, author \p defaultValue as the attribute's default,
-    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
-    /// the default for \p writeSparsely is \c false.
-    HAIRPROC_API
-    UsdAttribute CreateUpAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
-
-public:
-    // --------------------------------------------------------------------- //
-    // UV 
+    // PARAMUV 
     // --------------------------------------------------------------------- //
     /// The barycentric coordnates (vec3f) that the strand should attach to on the prim
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `float2[] uv = []` |
+    /// | Declaration | `float2[] hairProc:paramuv = []` |
     /// | C++ Type | VtArray<GfVec2f> |
     /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float2Array |
     HAIRPROC_API
-    UsdAttribute GetUvAttr() const;
+    UsdAttribute GetParamuvAttr() const;
 
-    /// See GetUvAttr(), and also 
+    /// See GetParamuvAttr(), and also 
     /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
     /// If specified, author \p defaultValue as the attribute's default,
     /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
     /// the default for \p writeSparsely is \c false.
     HAIRPROC_API
-    UsdAttribute CreateUvAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+    UsdAttribute CreateParamuvAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+
+public:
+    // --------------------------------------------------------------------- //
+    // REST 
+    // --------------------------------------------------------------------- //
+    /// The rest positions of the captures targets. If this isnt set, will try to use rest attribute from target
+    ///
+    /// | ||
+    /// | -- | -- |
+    /// | Declaration | `float3[] hairProc:rest = []` |
+    /// | C++ Type | VtArray<GfVec3f> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->Float3Array |
+    HAIRPROC_API
+    UsdAttribute GetRestAttr() const;
+
+    /// See GetRestAttr(), and also 
+    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+    /// If specified, author \p defaultValue as the attribute's default,
+    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+    /// the default for \p writeSparsely is \c false.
+    HAIRPROC_API
+    UsdAttribute CreateRestAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
 
 public:
     // --------------------------------------------------------------------- //

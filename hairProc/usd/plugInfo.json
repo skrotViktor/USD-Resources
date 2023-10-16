@@ -32,7 +32,7 @@
                         "priority": 1
                     }
                 }
-            },
+            }, 
             "LibraryPath": "@PLUG_INFO_LIBRARY_PATH@", 
             "Name": "hairProc", 
             "ResourcePath": "@PLUG_INFO_RESOURCE_PATH@", 

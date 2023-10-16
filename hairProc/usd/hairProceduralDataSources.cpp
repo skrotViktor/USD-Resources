@@ -1,5 +1,5 @@
 #include "hairProceduralDataSources.h"
-
+#include <thread>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -29,8 +29,7 @@ VtValue _PointsDataSource::GetValue(const Time shutterOffset) {
 }
 
 VtVec3fArray _PointsDataSource::GetTypedValue(const Time shutterOffset) {
-    if (HdPrimvarSchema depPrimvar = _schema.GetPrimvar(HdTokens->points)) {
-        HdSampledDataSourceHandle ds = depPrimvar.GetPrimvarValue();
+    if (_schema.GetPrimvar(HdTokens->points)) {
         return _deformer->Deform(shutterOffset);
     }
     return VtVec3fArray();
