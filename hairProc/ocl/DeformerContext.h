@@ -56,17 +56,24 @@ struct KernelHandle {
 
 class DeformerContext {
 public:
-    DeformerContext();
-
+    // DeformerContext();
+    int Init();
     int Build();
+
+    static DeformerContext* getInstance() {
+        static DeformerContext* ctx = new DeformerContext();
+        return ctx;
+    }
 
     // Add a .cl or .ocl file for executing
     int AddSource(const std::string& fileName);
 
     // Load a kernel from the sources added. Returns a KernelHandle which is used to access kernel specific
     // arguments.
-    KernelHandle* AddKernel(const std::string& name, int* err=nullptr);
+    KernelHandle* AddKernel(const std::string& kernelName, const std::string& key="", int* err=nullptr);
     KernelHandle* GetKernelHandle(const std::string& name);
+
+    const bool HasKernel(const std::string& name) {return _kernels.find(name) != _kernels.end();}
 
     // Execute a kernel with name kernelName
     int Execute(const size_t& global, const std::string& kernelName);
@@ -74,8 +81,14 @@ public:
     void Finish();
     // Is true once everything is initialized
     bool initialized = false;
+    bool built = false;
 
 private:
+    DeformerContext() = default;
+    DeformerContext(const DeformerContext&) = delete;
+    DeformerContext(DeformerContext&&) = delete;
+    DeformerContext& operator = (const DeformerContext&) = delete;
+    DeformerContext& operator = (DeformerContext&&) = delete;
 
     cl::string _LoadShader(const std::string_view& fileName, int* err);
 

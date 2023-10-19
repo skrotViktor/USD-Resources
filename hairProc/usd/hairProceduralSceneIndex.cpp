@@ -124,13 +124,11 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
 
     HdContainerDataSourceHandle sourceDs = _GetInputSceneIndex()->GetPrim(primPath).dataSource;
 
-    HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(targetDs, sourceDs);
+    HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(targetDs, sourceDs, primPath);
 
-    if (deformer->IsOCLInitialized()) {
-        _deformerMap[primPath] = deformer;
-        for (SdfPath& path : targets) {
-            _targets[path].insert(primPath);
-        }
+    _deformerMap[primPath] = deformer;
+    for (SdfPath& path : targets) {
+        _targets[path].insert(primPath);
     }
 }
 

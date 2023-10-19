@@ -167,23 +167,17 @@ __kernel void HairProc(
 
     mat3 restFrame;
     mat3 animFrame;
-
-    MatLoad(capt_prm[idx], tgt_rest_frames, restFrame);
-    MatLoad(capt_prm[idx], tgt_frames, animFrame);
-
-    // Transpose(restFrame, restFrameT);
+    MatLoad(idx, tgt_rest_frames, restFrame);
+    MatLoad(idx, tgt_frames, animFrame);
 
     for (int pt_idx = src_start + 1; pt_idx < src_end; pt_idx++) {
-        // Load the point position
         float3 p = vload3(pt_idx, src_p);
 
-        // Deform the vector
         p -= root;
         p = MatVecMul(p, restFrame);
         p = MatVecMul(p, animFrame);
         p += root + offset;
-    
-        // Store the vector back in to src_p
+
         vstore3(p, pt_idx, src_p);
     }
     root += offset;
@@ -197,7 +191,6 @@ __kernel void CalcTargetFrames(
     __global int* tgt_prmpts_offset,
 
     __global float* result,
-
     const int invert
 )
 {
