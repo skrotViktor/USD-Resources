@@ -23,25 +23,28 @@ TF_DECLARE_REF_PTRS(HairProcHairProceduralDeformer);
 class HairProcHairProceduralDeformer {
 public:
     HairProcHairProceduralDeformer(VtArray<HdContainerDataSourceHandle> targetContainers,
-                                   HdContainerDataSourceHandle sourceContainer);
+                                   HdContainerDataSourceHandle sourceContainer,
+                                   const SdfPath& primPath);
 
     VtVec3fArray Deform(const HdSampledDataSource::Time& shutterOffset);
 
     const bool InitOCL();
-    const bool IsOCLInitialized() const;
+    // const bool IsOCLInitialized() const;
 
 private:
     VtArray<HdContainerDataSourceHandle> _targetContainers;
     HdContainerDataSourceHandle _sourceContainer;
+    std::string _primPath;
 
-    std::shared_ptr<ocl::DeformerContext> _oclContext = std::make_shared<ocl::DeformerContext>();
-    // std::shared_ptr<ocl::DeformerContext> _tgtContext;
+    std::vector<int> _uniquePrims;
+    std::vector<int> _sortedCaptPrims;
+    // DeformerContext* _oclContext = nullptr;
 
     VtVec3fArray _DeformOCL(const HdSampledDataSource::Time& shutterOffset);
     VtVec3fArray _Deform(const HdSampledDataSource::Time& shutterOffset) {return VtVec3fArray(); }
-    VtMatrix3fArray _CalcTargetFrames(const HdSampledDataSource::Time& shutterOffset, const bool invert, VtVec3fArray& pts);
+    VtMatrix3fArray _CalcTargetFrames(const HdSampledDataSource::Time& shutterOffset, const bool invert, VtVec3fArray& pts, GfMatrix4f& xform);
 };
- 
+
 using HairProcHairProceduralDeformerSharedPtr = std::shared_ptr<class HairProcHairProceduralDeformer>;
 
 

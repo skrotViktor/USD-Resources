@@ -7,25 +7,30 @@
 
 namespace ocl {
 
-DeformerContext::DeformerContext() {
+int DeformerContext::Init() {
+    if (initialized) {
+        return 1;
+    }
     cl_int err;
     _device = cl::Device::getDefault(&err);
     if (err != CL_SUCCESS) {
         printf("Error: Failed to create a device group!\n");
-        return;
+        return 1;
     }
 
     _context = cl::Context(_device, nullptr, nullptr, nullptr, &err);
     if (err != CL_SUCCESS) {
         printf("Error: Failed to create a device group!\n");
-        return;
+        return 1;
     }
 
     _queue = cl::CommandQueue(_context, _device, 0, &err);
     if (err != CL_SUCCESS) {
         printf("Error: Failed to create a command commands!\n");
-        return;
+        return 1;
     }
+    initialized = true;
+    return 0;
 }
 
 int DeformerContext::AddSource(const std::string& fileName) {
@@ -41,44 +46,50 @@ int DeformerContext::AddSource(const std::string& fileName) {
 }
 
 int DeformerContext::Build() {
+    if (built) {
+        return 0;
+    }
     cl_int err;
     _program = cl::Program(_context, _kernelCodes, &err);
     if (err != CL_SUCCESS) {
-        initialized = false;
+        built = false;
         printf("Error: Failed to create compute program!\n");
         return 1;
     }
 
     err = _program.build(_device, 0, 0);
     if (err != CL_SUCCESS) {
-        initialized = false;
+        built = false;
         printf("Error: Failed to build program executable!\n");
         return 1;
     }
-    initialized = true;
+    built = true;
     return 0;
 }
 
-KernelHandle* DeformerContext::AddKernel(const std::string& name, int* err) {
-    cl::Kernel kernel(_program, name.c_str(), err);
+KernelHandle* DeformerContext::AddKernel(const std::string& kernelName, const std::string& key, int* err) {
+    cl::Kernel kernel(_program, kernelName.c_str(), err);
     if (err != CL_SUCCESS) {
         initialized = false;
-        printf("Error: Failed to create compute kernel with name %s\n", name.c_str());
+        printf("Error: Failed to create compute kernel with name %s\n", kernelName.c_str());
         return nullptr;
     }
     KernelHandle handle;
     handle.kernel = kernel;
     handle.queue = &_queue;
     handle.context = &_context;
-    _kernels[name] = handle;
 
+    std::string name = kernelName;
+    if (!key.empty()) {
+        name = key;
+    }
+    _kernels[name] = handle;
     return &_kernels[name];
 }
 
 KernelHandle* DeformerContext::GetKernelHandle(const std::string& name) {
     return &_kernels[name];
 }
-
 
 int DeformerContext::Execute(const size_t& global, const std::string& kernelName) {
     if (!initialized) {
@@ -98,7 +109,7 @@ int DeformerContext::Execute(const size_t& global, const std::string& kernelName
     }
 
     cl::Event ev;
-    err = _queue.enqueueNDRangeKernel(_kernels[kernelName].kernel, cl::NullRange, cl::NDRange(global), cl::NDRange(1), NULL, &ev);
+    err = _queue.enqueueNDRangeKernel(_kernels[kernelName].kernel, cl::NullRange, cl::NDRange(global), cl::NullRange, NULL, &ev);
     ev.wait();
     if (err != CL_SUCCESS) {
         std::cout << "Global: " << global << " Local: " << local << std::endl;
