@@ -13,46 +13,29 @@ def open_stage(stage_name):
     return stage
 
 
-def bend(stage, prim, height=2, bend=90):
-    frames = [0, 10]
-    stage.SetStartTimeCode(frames[0])
-    stage.SetEndTimeCode(frames[-1])
-    stage.SetFramesPerSecond(24)
-    mesh = UsdGeom.PointBased.Get(stage, prim.GetPath())
-    attr = mesh.GetPointsAttr()
-    pts = np.array(attr.Get())
-    attr.Set(pts, frames[0])
-
-    for p in pts:
-        y = p[1]
-        if y == 0:
-            continue
-
-        bend_amt = (p[1] / height) * bend
-        print(bend_amt)
-        p[0] += np.cos(bend_amt)
-        p[1] -= np.cos(bend_amt)
-
-    attr.Set(pts, frames[-1])
-
-def build_plane(stage, w=2, h=2):
+def build_plane(stage, name="plane", w=2, h=2, pos=(0,0,0)):
+    """
+    Build a simple plane for testing hair procedural
+    """
     pts = np.zeros((4, 3))
-    pts[0] = (w, h, 0)
-    pts[1] = (-w, h, 0)
-    pts[2] = (-w, -h, 0)
-    pts[3] = (w, -h, 0)
+    pts[0] = (pos[0] + w, pos[1] + h, pos[2])
+    pts[1] = (pos[0] - w, pos[1] + h, pos[2])
+    pts[2] = (pos[0] - w, pos[1] - h, pos[2])
+    pts[3] = (pos[0] + w, pos[1] - h, pos[2])
 
-    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/plane"))
+    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/" + name))
     mesh.CreatePointsAttr(pts)
     mesh.CreateFaceVertexIndicesAttr([0,1,2,3])
     mesh.CreateFaceVertexCountsAttr([4])
     return mesh
 
 
-def build_tube(stage, rows=5, columns=5, radius=1, height=2, caps=True):
+def build_tube(stage, name="tube", rows=5, columns=5, radius=1, height=2, caps=True, pos=(0,0,0)):
+    """
+    Build a tube for testing hair procedural
+    """
     rows = max(rows, 2)
     columns = max(columns, 3)
-
     rc = rows * columns
 
     pts = np.zeros((rc, 3))
@@ -60,7 +43,7 @@ def build_tube(stage, rows=5, columns=5, radius=1, height=2, caps=True):
         y = (height / (rows-1)) * i
         for j in range(columns):
             v = ((j % columns)) / columns * np.pi * 2
-            p = (np.sin(v) * radius, y, np.cos(v) * radius)
+            p = (pos[0] + np.sin(v) * radius, pos[1] + y, pos[2] + np.cos(v) * radius)
 
             pts[i*columns+j] = p
 
@@ -70,8 +53,8 @@ def build_tube(stage, rows=5, columns=5, radius=1, height=2, caps=True):
     # CAPS
     if caps:
         pts.resize((rc + 2, 3))
-        pts[-2] = (0,0,0)
-        pts[-1] = (0,height,0)
+        pts[-2] = pos
+        pts[-1] = (pos[0], pos[1] + height, pos[2])
         for i in range(columns):
             indices.append(i + 1 if i + 1 != columns else 0)
             indices.append(i)
@@ -94,37 +77,47 @@ def build_tube(stage, rows=5, columns=5, radius=1, height=2, caps=True):
             indices.append(idx)
             counts.append(4)
 
-    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/tube"))
+    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/"+name))
     mesh.CreatePointsAttr(pts)
     mesh.CreateFaceVertexIndicesAttr(indices)
     mesh.CreateFaceVertexCountsAttr(counts)
     return mesh
 
 
-def build_hair(stage, target, count=15, path="/curves", apply_api=True):
+def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True):
+    """
+    Create hair primitives on a target UsdPrim. Choose what faces to apply the hair to 
+    for testing face indexes.
+    """
     counts = target.GetFaceVertexCountsAttr().Get()
     indices = target.GetFaceVertexIndicesAttr().Get()
     pts = target.GetPointsAttr().Get()
 
-    l = count / len(counts)
+    if not faces:
+        faces = range(len(counts))
+
+    l = count / len(faces)
 
     curve_cnt = [2] * count
     curve_pts = np.zeros((count * 2, 3))
-    curve_w = [0.01] * count * 2
+    curve_w = np.full((1, count*2), 0.01)
     curve_prm = []
     curve_uvs = []
     curve_ups = []
 
     total = 0
     carried = 0
-    offset = 0
-    
-    for i, c in enumerate(counts):
+
+    for i in faces:
+        c = counts[i]
         li = int(np.rint(l + carried))
         carried += l - li
-        if not li:
-            offset += c
+        if li == 0:
             continue
+
+        offset = 0
+        if i > 0:
+            offset = sum(counts[0:i])
 
         p = np.zeros((c, 3))
         for j in range(c):
@@ -146,7 +139,6 @@ def build_hair(stage, target, count=15, path="/curves", apply_api=True):
                 v /= 2
                 w = 1-u-v
                 roots[j] = p[0]*w + p[1]*u + p[2]*v
-
             elif c == 4:
                 roots[j] = p[0]*(1-u)*(1-v) + p[1]*(1-u)*v + p[2]*u*v + p[3]*u*(1-v)
 
@@ -154,13 +146,11 @@ def build_hair(stage, target, count=15, path="/curves", apply_api=True):
             curve_ups.append(n)
         tips = roots + n
 
-        # print(total)
         curve_pts.put(range(total, total + li * 6), np.stack((roots, tips), -2))        
         curve_prm += [i] * li
 
-        offset += c
-        total += li * 6
-    
+        # total += li * 6
+
     hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path(path))
     hair.CreatePointsAttr(curve_pts)
     hair.CreateCurveVertexCountsAttr(curve_cnt)
@@ -181,7 +171,31 @@ def build_hair(stage, target, count=15, path="/curves", apply_api=True):
     return hair
 
 
-def animate(stage, prim, nframes=10, speed=0.1):
+def transform(stage, prim, nframes=10, speed=1, translate=True, rotate=False):
+    """
+    Set the xform of the UsdPrim
+    """
+    frames = range(nframes)
+    stage.SetStartTimeCode(frames[0])
+    stage.SetEndTimeCode(frames[-1])
+    stage.SetFramesPerSecond(24)
+
+    xform = UsdGeom.Xformable(prim)
+
+    if rotate:
+        op = xform.AddRotateYOp()
+        for f in frames:
+            op.Set((f / nframes) * speed * 360, f)
+
+    if translate:
+        op = xform.AddTranslateOp()
+        for f in frames:
+            op.Set((np.sin(f / nframes * 10) * 10, 0, 0), f)
+
+def transform_pts(stage, prim, nframes=10, speed=0.1):
+    """
+    Transforms each point idividually.
+    """
     frames = range(nframes)
     stage.SetStartTimeCode(frames[0])
     stage.SetEndTimeCode(frames[-1])
@@ -207,21 +221,58 @@ def animate(stage, prim, nframes=10, speed=0.1):
         pts_attr.Set(pts, f)
 
 
+def twist(stage, prim, nframes=10, speed=0.1):
+    """
+    twists the geometry to test skewing of faces
+    """
+    frames = range(nframes)
+    stage.SetStartTimeCode(frames[0])
+    stage.SetEndTimeCode(frames[-1])
+    stage.SetFramesPerSecond(24)
+
+    pts_attr = prim.GetPointsAttr()
+    pts = np.array(pts_attr.Get())
+
+    pts_attr.Set(pts, frames[0])
+
+    def _func(v, t):
+        x = v[0] * np.cos(t * v[1]) - v[2] * np.sin(t * v[1])
+        y = v[1]
+        z = v[0] * np.sin(t * v[1]) + v[2] * np.cos(t * v[1])
+        return np.array((x, y, z))
+
+    vf = np.vectorize(_func, signature="(n)->(n)")
+    vf.excluded.add("t")
+
+    for f in frames:
+        pts = vf(v=pts, t=speed)
+        pts_attr.Set(pts, f)
+
+
 def do_stuffs(stage):
-    mesh = build_tube(stage, rows=2, columns=5, height=10, caps=True)
-    # mesh = build_plane(stage)
+    """
+    Build the stage for testing hair procedural
+    """
 
-    for i in range(200):
-        build_hair(stage, mesh, count=10, path=f"/curves{i}", apply_api=True)
-    # build_hair(stage, mesh, count=9000, path="/curves2")
+    # for i in range(100):
+    i = 0
+    # tube0 = build_tube(stage, f"tube{i*3}", rows=3, columns=5, height=10, caps=True, pos=(0,0,0))
+    # tube1 = build_tube(stage, f"tube{i*3+1}", rows=5, columns=10, height=10, caps=True, pos=(6,0,0))
+    plane = build_plane(stage, f"plane1",  w=10, h=10)
+    # for i in range(100):
+    #     build_hair(stage, tube0, count=10, path=f"/curves{i*3}")
+    #     build_hair(stage, tube1, count=10, path=f"/curves{i*3 + 1}")
 
-    animate(stage, mesh, nframes=200)
-    # bend(stage, mesh, height=10)
+    build_hair(stage, plane, count=100, path=f"/curves1", apply_api=True)
+    transform(stage, plane, nframes=200, translate=False, rotate=True)
+    # twist(stage, tube0, nframes=200, speed=0.01)
+    # transform_pts(stage, tube1, nframes=200)
+
 
 
 if __name__ == "__main__":
     stage_name = os.path.join(os.path.dirname(__file__), "hairProc.usda")
-    
+
     stage = open_stage(stage_name)
     do_stuffs(stage)
     stage.Export(stage_name)

@@ -29,7 +29,6 @@ int DeformerContext::Init() {
         printf("Error: Failed to create a command commands!\n");
         return 1;
     }
-
     initialized = true;
     return 0;
 }
@@ -92,7 +91,6 @@ KernelHandle* DeformerContext::GetKernelHandle(const std::string& name) {
     return &_kernels[name];
 }
 
-
 int DeformerContext::Execute(const size_t& global, const std::string& kernelName) {
     if (!initialized) {
         return 1;
@@ -111,7 +109,7 @@ int DeformerContext::Execute(const size_t& global, const std::string& kernelName
     }
 
     cl::Event ev;
-    err = _queue.enqueueNDRangeKernel(_kernels[kernelName].kernel, cl::NullRange, cl::NDRange(global), cl::NDRange(1), NULL, &ev);
+    err = _queue.enqueueNDRangeKernel(_kernels[kernelName].kernel, cl::NullRange, cl::NDRange(global), cl::NullRange, NULL, &ev);
     ev.wait();
     if (err != CL_SUCCESS) {
         std::cout << "Global: " << global << " Local: " << local << std::endl;

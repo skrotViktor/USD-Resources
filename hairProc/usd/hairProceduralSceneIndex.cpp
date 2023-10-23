@@ -5,6 +5,8 @@
 
 #include "pxr/pxr.h"
 #include "pxr/imaging/hd/tokens.h"
+#include "pxr/base/trace/trace.h"
+#include "pxr/base/trace/reporter.h"
 
 #include <memory>
 #include <iostream>
@@ -123,8 +125,12 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
     }
 
     HdContainerDataSourceHandle sourceDs = _GetInputSceneIndex()->GetPrim(primPath).dataSource;
+    TraceCollector::GetInstance().SetEnabled(true);
 
     HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(targetDs, sourceDs, primPath);
+
+    TraceCollector::GetInstance().SetEnabled(false);
+    TraceReporter::GetGlobalReporter()->ReportTimes(std::cout);
 
     _deformerMap[primPath] = deformer;
     for (SdfPath& path : targets) {

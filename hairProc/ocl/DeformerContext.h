@@ -11,6 +11,9 @@
 #include <vector>
 #include <array>
 #include <map>
+#include <unordered_map>
+
+#include <iostream>
 
 #include "opencl.hpp"
 
@@ -18,45 +21,46 @@ namespace ocl {
 
 struct KernelHandle {
     cl::Kernel kernel;
-    std::vector<cl::Buffer> buffers;
+    std::unordered_map<std::string, cl::Buffer> arguments;
     cl::CommandQueue* queue;
     cl::Context* context;
 
     int argCount = 0;
 
     template<typename T>
-    int AddArgument(cl_mem_flags flags, const size_t& size, const bool createBuffer, T* data=nullptr);
-    template<typename It>
-    int AddArgument(cl_mem_flags flags, const size_t& size, It start);
+    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, T* data=nullptr);
+    template<typename T>
+    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, const T& data);
 
     template<typename mem, typename T>
     int SetArgument(const int argIndex, T* data);
 
     template<typename T>
+    int SetArgument(const int argIndex, const T& data);
+
+    template<typename mem, typename T>
+    int SetArgument(const std::string& name, T* data);
+
+    template<typename T>
+    int SetArgument(const std::string& name, const T& data);
+
+    template<typename T>
     int ReadBufferData(T* data, cl::Buffer buffer, const size_t size);
-    template<typename It>
-    int ReadBufferData(It start, cl::Buffer buffer, const size_t size);
 
     template<typename T>
     int SetBufferData(T* data, cl::Buffer buffer, const size_t size);
-    template<typename It>
-    int SetBufferData(It start, cl::Buffer buffer, const size_t size);
 
     template<typename T>
-    int ReadBufferData(T* data, const int& bufferIndex, const size_t size);
-    template<typename It>
-    int ReadBufferData(It start, const int& bufferIndex, const size_t size);
+    int ReadBufferData(T* data, const std::string& bufferName, const size_t size);
 
     template<typename T>
-    int SetBufferData(T* data, const int& bufferIndex, const size_t size);
-    template<typename It>
-    int SetBufferData(It start, const int& bufferIndex, const size_t size);
-
+    int SetBufferData(T* data, const std::string& bufferName, const size_t size);
 };
 
+
+// Singleton class for handling opencl
 class DeformerContext {
 public:
-    // DeformerContext();
     int Init();
     int Build();
 
@@ -105,7 +109,7 @@ private:
 };
 
 template<typename T>
-inline int KernelHandle::AddArgument(cl_mem_flags flags, const size_t& size, const bool createBuffer, T* data) {
+inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, T* data) {
     if (createBuffer) {
         cl::Buffer d_data(*context, flags, sizeof(T) * size);
 
@@ -114,8 +118,7 @@ inline int KernelHandle::AddArgument(cl_mem_flags flags, const size_t& size, con
         }
 
         SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
-        buffers.push_back(d_data);
-
+        arguments.insert({name, d_data});
     } else {
         SetArgument<T, T>(argCount, data);
     }
@@ -123,17 +126,18 @@ inline int KernelHandle::AddArgument(cl_mem_flags flags, const size_t& size, con
     return 0;
 }
 
-template<typename It>
-inline int KernelHandle::AddArgument(cl_mem_flags flags, const size_t& size, It start) {
+template<typename T>
+inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, const T& data) {
+    if (createBuffer) {
+        cl::Buffer d_data(*context, flags, sizeof(T) * size);
 
-    typename It::value_type T = *start;
-    cl::Buffer d_data(*context, flags, sizeof(T) * size);
+        SetBufferData(&data, d_data, size);        
 
-    SetBufferData(start, d_data, size);
-
-    SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
-    buffers.push_back(d_data);
-
+        SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
+        arguments.insert({name, d_data});
+    } else {
+        SetArgument<T>(argCount, data);
+    }
     argCount++;
     return 0;
 }
@@ -141,6 +145,24 @@ inline int KernelHandle::AddArgument(cl_mem_flags flags, const size_t& size, It 
 template<typename mem, typename T>
 inline int KernelHandle::SetArgument(const int argIndex, T* data) {
     kernel.setArg(argIndex, sizeof(mem), data);
+    return 0;
+}
+
+template<typename T>
+inline int KernelHandle::SetArgument(const int argIndex, const T& data) {
+    kernel.setArg<T>(argIndex, data);
+    return 0;
+}
+
+template<typename mem, typename T>
+inline int KernelHandle::SetArgument(const std::string& name, T* data) {
+    kernel.setArg<T>(arguments[name], data);
+    return 0;
+}
+
+template<typename T>
+inline int KernelHandle::SetArgument(const std::string& name, const T& data) {
+    kernel.setArg<T>(arguments[name], data);
     return 0;
 }
 
@@ -154,25 +176,13 @@ inline int KernelHandle::SetBufferData(T* data, cl::Buffer buffer, const size_t 
     return 0;
 }
 
-template<typename It>
-inline int KernelHandle::SetBufferData(It start, cl::Buffer buffer, const size_t size) {
-    typename It::value_type T = *start;
-    cl_int err = queue->enqueueWriteBuffer(buffer, CL_TRUE, 0, sizeof(T) * size, static_cast<void*>(&start));
-    if (err != CL_SUCCESS) {
-        printf("Error: Failed to write data to source array!\n");
+template<typename T>
+inline int KernelHandle::SetBufferData(T* data, const std::string& bufferName, const size_t size) {
+    if (arguments.find(bufferName) == arguments.end()) {
+        printf("Error: Buffer %s is not recognized!\n", bufferName.c_str());
         return 1;
     }
-    return 0;
-}
-
-template<typename T>
-inline int KernelHandle::SetBufferData(T* data, const int& bufferIndex, const size_t size) {
-    return SetBufferData(data, buffers[bufferIndex], size);
-}
-
-template<typename It>
-inline int KernelHandle::SetBufferData(It start, const int& bufferIndex, const size_t size) {
-    return SetBufferData(start, buffers[bufferIndex], start);
+    return SetBufferData(data, arguments[bufferName], size);
 }
 
 template<typename T>
@@ -185,27 +195,10 @@ inline int KernelHandle::ReadBufferData(T* data, cl::Buffer buffer, const size_t
     return 0;
 }
 
-template<typename It>
-inline int KernelHandle::ReadBufferData(It start, cl::Buffer buffer, const size_t size) {
-    cl_int err = queue->enqueueReadBuffer(buffer, CL_TRUE, 0, sizeof(It::value_type) * size, static_cast<void*>(start));
-    if (err != CL_SUCCESS) {
-        printf("Error: Failed to read output array! %d\n", err);
-        return 1;
-    }
-    return 0;
-}
-
 template<typename T>
-inline int KernelHandle::ReadBufferData(T* data, const int& bufferIndex, const size_t size) {
-    return ReadBufferData(data, buffers[bufferIndex], size);
+inline int KernelHandle::ReadBufferData(T* data, const std::string& bufferName, const size_t size) {
+    return ReadBufferData(data, arguments[bufferName], size);
 }
-
-template<typename It>
-inline int KernelHandle::ReadBufferData(It start, const int& bufferIndex, const size_t size) {
-    return ReadBufferData(start, buffers[bufferIndex], size);
-}
-
-
 
 }
 
