@@ -103,7 +103,6 @@ def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True
     curve_w = np.full((1, count*2), 0.01)
     curve_prm = []
     curve_uvs = []
-    curve_ups = []
 
     total = 0
     carried = 0
@@ -143,13 +142,12 @@ def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True
                 roots[j] = p[0]*(1-u)*(1-v) + p[1]*(1-u)*v + p[2]*u*v + p[3]*u*(1-v)
 
             curve_uvs.append((u, v))
-            curve_ups.append(n)
         tips = roots + n
 
         curve_pts.put(range(total, total + li * 6), np.stack((roots, tips), -2))        
         curve_prm += [i] * li
 
-        # total += li * 6
+        total += li * 6
 
     hair = UsdGeom.BasisCurves.Define(stage, Sdf.Path(path))
     hair.CreatePointsAttr(curve_pts)
@@ -253,9 +251,6 @@ def do_stuffs(stage):
     """
     Build the stage for testing hair procedural
     """
-
-    # for i in range(100):
-    i = 0
     # tube0 = build_tube(stage, f"tube{i*3}", rows=3, columns=5, height=10, caps=True, pos=(0,0,0))
     # tube1 = build_tube(stage, f"tube{i*3+1}", rows=5, columns=10, height=10, caps=True, pos=(6,0,0))
     plane = build_plane(stage, f"plane1",  w=10, h=10)
@@ -263,11 +258,10 @@ def do_stuffs(stage):
     #     build_hair(stage, tube0, count=10, path=f"/curves{i*3}")
     #     build_hair(stage, tube1, count=10, path=f"/curves{i*3 + 1}")
 
-    build_hair(stage, plane, count=100, path=f"/curves1", apply_api=True)
+    build_hair(stage, plane, count=10, path=f"/curves1", apply_api=True)
     transform(stage, plane, nframes=200, translate=False, rotate=True)
     # twist(stage, tube0, nframes=200, speed=0.01)
     # transform_pts(stage, tube1, nframes=200)
-
 
 
 if __name__ == "__main__":

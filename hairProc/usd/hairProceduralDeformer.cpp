@@ -43,7 +43,6 @@ VtVec3fArray HairProcHairProceduralDeformer::Deform(const HdSampledDataSource::T
     auto srcPrimvarsSchema = HdPrimvarsSchema::GetFromParent(_sourceContainer);
     VtVec3fArray srcPos = srcPrimvarsSchema.GetPrimvar(HdTokens->points).GetPrimvarValue()->GetValue(0).UncheckedGet<VtArray<GfVec3f>>();
     return _DeformOCL(shutterOffset);
-    // return _Deform(shutterOffset);
 }
 
 VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSource::Time& shutterOffset) {
@@ -82,7 +81,6 @@ VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSourc
     VtVec3fArray result;
     result.resize(srcPos.size(), GfVec3f(0));
     procKernel->ReadBufferData(result.data()->data(), "result", resultBufferSize);
-
 
     _oclContext->Finish();
     return result;
@@ -140,6 +138,7 @@ const bool HairProcHairProceduralDeformer::InitOCL() {
     srcPrimIndices.resize(size);
     total = 0;
     for (int i = 0; i < size; i++) {
+        srcPrimIndices[i] = total;
         total += srcPrimLengths[i];
     }
 

@@ -10,7 +10,7 @@ set(PLUG_INFO_ROOT "..")
 set(CONFIGURATION_SOURCE ${CMAKE_CURRENT_LIST_DIR}/cmake/config.cmake)
 set(CONFIGURATION_TARGET ${CMAKE_CURRENT_BINARY_DIR}/${USDPLUGIN_NAME}Config.cmake)
 
-find_package(PythonLibs 3.7 REQUIRED)
+find_package(Python3 REQUIRED)
 
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")

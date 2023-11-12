@@ -105,8 +105,6 @@ static void MatMul(
     mat3 m
 )
 {
-    // mat3 bT;
-    // Transpose(b, bT);
     m[0] = (float3)(dot(a[0], b[0]), dot(a[1], b[0]), dot(a[2], b[0]));
     m[1] = (float3)(dot(a[0], b[1]), dot(a[1], b[1]), dot(a[2], b[1]));
     m[2] = (float3)(dot(a[0], b[2]), dot(a[1], b[2]), dot(a[2], b[2]));
@@ -175,6 +173,7 @@ __kernel void HairProc(
     if (npts != 3 && npts != 4) {
         return;
     }
+
 
     int pt1 = tgt_prmpts_indices[tgt_prmpts_offset[tgt_prm] + 1];
     int pt2 = tgt_prmpts_indices[tgt_prmpts_offset[tgt_prm] + 2];

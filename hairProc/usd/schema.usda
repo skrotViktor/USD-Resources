@@ -21,9 +21,10 @@ class "HairProceduralAPI"
     inherits = </APISchemaBase>
     doc = """API for procedurally deforming a groom to an animated geometry. Apply this API to the hair geometry.
     Required attributes:
-        - target: The animated geometry
-        - capt:prim: The prim each strand should attach to on the target
-        - capt:uv: The barycentric coordinates of the prim each strand should attach to on the target
+        - hairproc:target: The animated geometry
+        - hairproc:prim: The prim each strand should attach to on the target
+        - hairproc:uv: The barycentric coordinates of the prim each strand should attach to on the target
+        - hairproc:rest: The capture positions of the target geometry
     """
     customData = {
         string className = "HairProceduralAPI"

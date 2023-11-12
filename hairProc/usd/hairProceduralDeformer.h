@@ -38,7 +38,6 @@ private:
 
     std::vector<int> _uniquePrims;
     std::vector<int> _sortedCaptPrims;
-    // DeformerContext* _oclContext = nullptr;
 
     VtVec3fArray _DeformOCL(const HdSampledDataSource::Time& shutterOffset);
     VtVec3fArray _Deform(const HdSampledDataSource::Time& shutterOffset) {return VtVec3fArray(); }
