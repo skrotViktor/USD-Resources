@@ -18,10 +18,10 @@ def build_plane(stage, name="plane", w=2, h=2, pos=(0,0,0)):
     Build a simple plane for testing hair procedural
     """
     pts = np.zeros((4, 3))
-    pts[0] = (pos[0] + w, pos[1] + h, pos[2])
-    pts[1] = (pos[0] - w, pos[1] + h, pos[2])
-    pts[2] = (pos[0] - w, pos[1] - h, pos[2])
-    pts[3] = (pos[0] + w, pos[1] - h, pos[2])
+    pts[0] = (pos[0] + w, pos[1] + h*2, pos[2])
+    pts[1] = (pos[0] - w, pos[1] + h*2, pos[2])
+    pts[3] = (pos[0] + w, 0, pos[2])
+    pts[2] = (pos[0] - w, 0, pos[2])
 
     mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/" + name))
     mesh.CreatePointsAttr(pts)
@@ -100,7 +100,7 @@ def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True
 
     curve_cnt = [2] * count
     curve_pts = np.zeros((count * 2, 3))
-    curve_w = np.full((1, count*2), 0.01)
+    curve_w = np.full((1, count*2), 0.03)
     curve_prm = []
     curve_uvs = []
 
@@ -155,6 +155,9 @@ def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True
     hair.CreateWidthsAttr(curve_w)
     hair.CreateTypeAttr("linear")
 
+    cd = np.random.random((3, 1))
+    hair.CreateDisplayColorAttr(cd)
+
     if apply_api:
         api = HairProc.HairProceduralAPI.Apply(hair.GetPrim())
         api.CreatePrimAttr(curve_prm)
@@ -167,7 +170,6 @@ def build_hair(stage, target, count=15, path="/curves", faces=[], apply_api=True
         assert(hair.GetPrim().HasAPI(HairProc.HairProceduralAPI))
 
     return hair
-
 
 def transform(stage, prim, nframes=10, speed=1, translate=True, rotate=False):
     """
@@ -188,7 +190,7 @@ def transform(stage, prim, nframes=10, speed=1, translate=True, rotate=False):
     if translate:
         op = xform.AddTranslateOp()
         for f in frames:
-            op.Set((np.sin(f / nframes * 10) * 10, 0, 0), f)
+            op.Set((0, 0, np.sin(f / nframes * 10) * 10), f)
 
 def transform_pts(stage, prim, nframes=10, speed=0.1):
     """
@@ -231,8 +233,6 @@ def twist(stage, prim, nframes=10, speed=0.1):
     pts_attr = prim.GetPointsAttr()
     pts = np.array(pts_attr.Get())
 
-    pts_attr.Set(pts, frames[0])
-
     def _func(v, t):
         x = v[0] * np.cos(t * v[1]) - v[2] * np.sin(t * v[1])
         y = v[1]
@@ -251,17 +251,17 @@ def do_stuffs(stage):
     """
     Build the stage for testing hair procedural
     """
-    # tube0 = build_tube(stage, f"tube{i*3}", rows=3, columns=5, height=10, caps=True, pos=(0,0,0))
-    # tube1 = build_tube(stage, f"tube{i*3+1}", rows=5, columns=10, height=10, caps=True, pos=(6,0,0))
-    plane = build_plane(stage, f"plane1",  w=10, h=10)
-    # for i in range(100):
-    #     build_hair(stage, tube0, count=10, path=f"/curves{i*3}")
-    #     build_hair(stage, tube1, count=10, path=f"/curves{i*3 + 1}")
+    tube = build_tube(stage, "tube", rows=5, columns=10, height=10, caps=True)
+    plane1 = build_plane(stage, "plane1",  w=5, h=5, pos=(10,0,0))
+    plane2 = build_plane(stage, "plane2",  w=5, h=5, pos=(20,0,0))
+    
+    build_hair(stage, tube, count=1000, path="/curves1")
+    build_hair(stage, plane1, count=1000, path="/curves2")
+    build_hair(stage, plane2, count=1000, path="/curves3")
 
-    build_hair(stage, plane, count=10, path=f"/curves1", apply_api=True)
-    transform(stage, plane, nframes=200, translate=False, rotate=True)
-    # twist(stage, tube0, nframes=200, speed=0.01)
-    # transform_pts(stage, tube1, nframes=200)
+    twist(stage, tube, nframes=200, speed=0.01)
+    transform_pts(stage, plane1, nframes=200)
+    transform(stage, plane2, nframes=200)
 
 
 if __name__ == "__main__":

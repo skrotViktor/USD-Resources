@@ -61,7 +61,6 @@ HdDataSourceBaseHandle _PrimvarOverrideDataSource::Get(const TfToken& name) {
     return result;
 }
 
-
 TfTokenVector _HairProcDataSource::GetNames(){
     if (!_primDs) {
         return {};
@@ -71,8 +70,7 @@ TfTokenVector _HairProcDataSource::GetNames(){
 
 HdDataSourceBaseHandle _HairProcDataSource::Get(const TfToken& name) {
     auto result = _primDs->Get(name);
-    if (name == HdPrimvarsSchemaTokens->primvars)
-    {
+    if (name == HdPrimvarsSchemaTokens->primvars) {
         auto primvarSchema = HdPrimvarsSchema::GetFromParent(_primDs);
         if (auto primvarContainer = HdContainerDataSource::Cast(result)) {
             return _PrimvarOverrideDataSource::New(primvarContainer, primvarSchema, _deformer);

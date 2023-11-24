@@ -73,10 +73,8 @@ static void CalcPrimFrame(
     mat3 m
 )
 {
-    __private float3 e = normalize(p1 - p0);
-
     __private float3 z = normalize(p2 - p0);
-    __private float3 y = normalize(cross(e, z));
+    __private float3 y = normalize(cross(p1 - p0, z));
     __private float3 x = normalize(cross(y, z));
 
     Mat3FromCols(x, y, z, m);
@@ -95,7 +93,7 @@ static float3 Mat4VecMul(
     const mat4 m
 )
 {
-    float4 tmp = (float4)(vec.xyz, 0);
+    float4 tmp = (float4)(vec.xyz, 1);
     return (float3)(dot(m[0], tmp), dot(m[1], tmp), dot(m[2], tmp));
 }
 
@@ -152,7 +150,6 @@ __kernel void HairProc(
 
     __global float* tgt_rest_frames,
     __global float* tgt_frames,
-    __constant float* tgt_translate,
 
     /* Capture attributes */
     __global float* capt_uv, // vector2
@@ -199,21 +196,21 @@ __kernel void HairProc(
     int src_start = src_primpts_indices[idx];
     int src_end = src_start + src_primpts_lengths[idx];
 
-    float3 translate = vload3(0, tgt_translate);
+    // float3 translate = vload3(0, tgt_translate);
     float3 root = vload3(src_start, src_p);
-    float3 offset = new_pos - root + translate;
+    float3 offset = new_pos - root;
 
-    mat3 restFrame;
-    mat3 animFrame;
-    Mat3Load3(capt_prm[idx], tgt_rest_frames, restFrame);
-    Mat3Load3(capt_prm[idx], tgt_frames, animFrame);
+    mat3 R;
+    mat3 F;
+    Mat3Load3(capt_prm[idx], tgt_rest_frames, R);
+    Mat3Load3(capt_prm[idx], tgt_frames, F);
 
     for (int pt_idx = src_start + 1; pt_idx < src_end; pt_idx++) {
         float3 p = vload3(pt_idx, src_p);
 
         p -= root;
-        p = Mat3VecMul(p, restFrame);
-        p = Mat3VecMul(p, animFrame);
+        p = Mat3VecMul(p, R);
+        p = Mat3VecMul(p, F);
         p += root + offset;
 
         vstore3(p, pt_idx, result);

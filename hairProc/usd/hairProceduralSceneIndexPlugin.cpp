@@ -1,12 +1,8 @@
 
 #include "pxr/imaging/hd/sceneIndexPluginRegistry.h"
 
-#include "pxr/base/tf/envSetting.h"
-
 #include "hairProceduralSceneIndexPlugin.h"
 #include "hairProceduralSceneIndex.h"
-#include <string>
-#include <iostream>
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -23,7 +19,7 @@ TF_REGISTRY_FUNCTION(HdSceneIndexPlugin) {
         TfToken(),
         _tokens->sceneIndexPluginName,
         nullptr,
-        0, // insertion phase
+        0,
         HdSceneIndexPluginRegistry::InsertionOrderAtStart);
 }
 

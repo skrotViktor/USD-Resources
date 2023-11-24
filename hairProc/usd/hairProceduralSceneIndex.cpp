@@ -36,7 +36,6 @@ HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPa
             }
         }
     }
-
     return prim;
 }
 

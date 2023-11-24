@@ -64,7 +64,6 @@ VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSourc
 
     VtMatrix3fArray tgtFrames = _CalcTargetFrames(shutterOffset, false, tgtPos, xform);
 
-    procKernel->SetBufferData<float>(xform.GetRow3(3).data(), "tgtTranslate", 3);
     procKernel->SetBufferData<float>(tgtPos.data()->data(), "tgtPos", tgtPos.size() * 3);
     procKernel->SetBufferData<float>(tgtFrames.data()->data(), "frames", tgtFrames.size() * 9);
 
@@ -150,7 +149,6 @@ const bool HairProcHairProceduralDeformer::InitOCL() {
     int count = 0;
     for (auto i : args) {
         _sortedCaptPrims[i] = offset;
-
         if (captPrim[i] != captPrim[i+1] || i == args.size()-1) {
             _uniquePrims.erase(_uniquePrims.begin() + offset, _uniquePrims.begin() + offset + count);
             offset++;
@@ -192,7 +190,6 @@ const bool HairProcHairProceduralDeformer::InitOCL() {
 
     err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "restFrames", _uniquePrims.size() * 9, true, targetRestFrames.data()->data());
     err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "frames", _uniquePrims.size() * 9, true);
-    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "tgtTranslate", 3, true);
 
     err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "captUv", captUv.size() * 2, true, captUv.data()->data());
     err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "captPrim", _sortedCaptPrims.size(), true, _sortedCaptPrims.data());

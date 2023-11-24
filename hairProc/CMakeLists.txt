@@ -21,7 +21,7 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 # Set some compile definitions. 
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # Enables linking USD libraries with C++17
-add_definitions(-D_GLIBCXX_USE_CXX_ABI=0) # Can't remember why this is here...
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) # Can't remember why this is here...
 
 # The subdirectories defines our actual library targets
 add_subdirectory(usd)
