@@ -77,7 +77,7 @@ public:
     KernelHandle* AddKernel(const std::string& kernelName, const std::string& key="", int* err=nullptr);
     KernelHandle* GetKernelHandle(const std::string& name);
 
-    const bool HasKernel(const std::string& name) {return _kernels.find(name) != _kernels.end();}
+    bool HasKernel(const std::string& name) {return _kernels.find(name) != _kernels.end();}
 
     // Execute a kernel with name kernelName
     int Execute(const size_t& global, const std::string& kernelName);

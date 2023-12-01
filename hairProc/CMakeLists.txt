@@ -1,5 +1,8 @@
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(hairProc VERSION 0.1.0 LANGUAGES CXX)
+
+set(BUILD_USD_PLUGIN 1)
+set(BUILD_HOUDINI_PLUGIN 1)
 
 # Set the C++ requirements
 set(CMAKE_CXX_STANDARD 17) # c++ 17 used for some convenience functions
@@ -12,7 +15,9 @@ set(OCLMODULE_NAME ocl) # The name of the opencl library
 
 # Install directory
 set(USD_INSTALL_ROOT /opt/USD) # The path to our USD istall directory
+
 set(CMAKE_INSTALL_PREFIX "/opt/USD_resources" CACHE PATH "..." FORCE) # Where this project will be installed
+# set(INSTALL_PATH "/opt/USD_resources")
 
 # Some RPATH stuff. Don't think this is how you do it....
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -22,6 +27,8 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 # Set some compile definitions. 
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # Enables linking USD libraries with C++17
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) # Can't remember why this is here...
+
+include(cmake/createTarget.cmake)
 
 # The subdirectories defines our actual library targets
 add_subdirectory(usd)
