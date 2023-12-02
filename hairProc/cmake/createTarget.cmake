@@ -77,6 +77,7 @@ function(create_target TARGET)
             set(_plugInfo plugInfoHoudini.json)
         endif()
 
+        message("${PLUG_INFO_LIBRARY_PATH}")
         configure_file(
             ${_plugInfo}
             ${CMAKE_BINARY_DIR}/${_plugInfo}
@@ -84,6 +85,7 @@ function(create_target TARGET)
         )
         install(
             FILES ${CMAKE_BINARY_DIR}/${_plugInfo}
+            RENAME plugInfo.json
             DESTINATION "lib/usd/${TARGET}/resources"
         )
     endif()
