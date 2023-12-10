@@ -36,6 +36,8 @@ function(create_target TARGET)
         ${ARGN}
     )
 
+    
+
     get_py_module_name(${TARGET} MODULE_NAME)
 
     add_library(${TARGET}
@@ -47,7 +49,7 @@ function(create_target TARGET)
     if (${args_BUILD_HOUDINI})
         target_compile_definitions(${TARGET}
             PUBLIC
-            BUILD_HOUDINI_PLUGIN=1
+            BUILD_HOUDINI_PLUGIN
         )
     endif()
 
@@ -77,7 +79,6 @@ function(create_target TARGET)
             set(_plugInfo plugInfoHoudini.json)
         endif()
 
-        message("${PLUG_INFO_LIBRARY_PATH}")
         configure_file(
             ${_plugInfo}
             ${CMAKE_BINARY_DIR}/${_plugInfo}
@@ -109,7 +110,6 @@ function(create_target TARGET)
         LIBRARY DESTINATION lib
         INCLUDES DESTINATION include
     )
-
     
     if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/generatedSchema.usda")
         install(
@@ -138,10 +138,16 @@ function(create_target TARGET)
         PROPERTIES
             INSTALL_RPATH "@loader_path/../../.."
         )
+        if (${args_BUILD_HOUDINI})
+            target_compile_definitions(${USDPLUGIN_PYTHON_NAME}
+                PUBLIC
+                    BUILD_HOUDINI_PLUGIN
+            )
+        endif()
 
         target_include_directories(
             ${USDPLUGIN_PYTHON_NAME}
-            PRIVATE
+            PUBLIC
                 ${INCLUDE_DIRS}
         )
 

@@ -17,7 +17,6 @@ set(OCLMODULE_NAME ocl) # The name of the opencl library
 set(USD_INSTALL_ROOT /opt/USD) # The path to our USD istall directory
 
 set(CMAKE_INSTALL_PREFIX "/opt/USD_resources" CACHE PATH "..." FORCE) # Where this project will be installed
-# set(INSTALL_PATH "/opt/USD_resources")
 
 # Some RPATH stuff. Don't think this is how you do it....
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -26,7 +25,6 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
 # Set some compile definitions. 
 add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # Enables linking USD libraries with C++17
-add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0) # Can't remember why this is here...
 
 include(cmake/createTarget.cmake)
 

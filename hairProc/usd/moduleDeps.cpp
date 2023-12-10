@@ -17,7 +17,12 @@ TF_REGISTRY_FUNCTION(TfScriptModuleLoader) {
         TfToken("hd"),
         TfToken("usdImaging")
     };
+#ifndef BUILD_HOUDINI_PLUGIN
     TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("hairProc"), TfToken("vik.HairProc"), reqs);
+#else
+    TfScriptModuleLoader::GetInstance().RegisterLibrary(TfToken("hairProcHoudini"), TfToken("vik.HairProcHoudini"), reqs);
+#endif
+
 }
 
 PXR_NAMESPACE_CLOSE_SCOPE
