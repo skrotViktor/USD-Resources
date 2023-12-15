@@ -14,13 +14,13 @@ set(PYPACKAGE_NAME vik) # The package name used for python. "from vik import Hai
 set(OCLMODULE_NAME ocl) # The name of the opencl library
 
 if (${BUILD_USD_PLUGIN} AND NOT DEFINED USD_INSTALL_ROOT)
-message(FATAL_ERROR "Missing USD_INSTALL_ROOT")
-return()
+    message(FATAL_ERROR "Missing USD_INSTALL_ROOT")
+    return()
 endif()
 
 if (${BUILD_HOUDINI_PLUGIN} AND NOT DEFINED HOUDINI_INSTALL_ROOT)
-message(FATAL_ERROR "Missing HOUDINI_INSTALL_ROOT")
-return()
+    message(FATAL_ERROR "Missing HOUDINI_INSTALL_ROOT")
+    return()
 endif()
 
 # Some RPATH stuff. Don't think this is how you do it....
