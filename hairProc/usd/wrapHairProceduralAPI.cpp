@@ -32,12 +32,16 @@
 #include "pxr/base/tf/pyResultConversions.h"
 #include "pxr/base/tf/pyUtils.h"
 #include "pxr/base/tf/wrapTypeHelpers.h"
-
-#include <boost/python.hpp>
-
 #include <string>
 
-using namespace boost::python;
+#ifdef BUILD_HOUDINI_PLUGIN
+    #include <hboost/python.hpp>
+    using namespace hboost::python;
+#else
+    #include <boost/python.hpp>
+    using namespace boost::python;
+#endif
+
 
 PXR_NAMESPACE_USING_DIRECTIVE
 

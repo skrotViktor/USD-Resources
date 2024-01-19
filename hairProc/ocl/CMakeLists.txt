@@ -11,33 +11,52 @@ file(GLOB headers "*.h")
 
 file(GLOB OCL "kernels/*.cl")
 
-install(
-    FILES ${OCL}
-    DESTINATION "ocl"
-)
-
-# OCL LIBRARY
-add_library(${OCLMODULE_NAME}
-    SHARED
+create_target(
+    ${OCLMODULE_NAME}
+    HEADERS
         ${headers}
+    SOURCES
         ${sources}
-)
-
-target_link_libraries(${OCLMODULE_NAME}
-    PUBLIC
+    # INCLUDE_DIRS
+    #     ${PYTHON_INCLUDE_PATH}
+    #     ${PXR_INCLUDE_DIRS}
+    #     ".."
+    LIBS
         ${OpenCL_LIBRARIES}
 )
 
-install(
-    FILES
-        ${headers}
-    DESTINATION
-        include/ocl
-)
+
+# OCL LIBRARY
+# add_library(${OCLMODULE_NAME}
+#     SHARED
+#         ${headers}
+#         ${sources}
+# )
+
+# target_link_libraries(${OCLMODULE_NAME}
+#     PUBLIC
+#         ${OpenCL_LIBRARIES}
+# )
+
+# install(
+#     FILES
+#         ${headers}
+#     DESTINATION
+#         include/ocl
+# )
+
+# install(
+#     TARGETS ${OCLMODULE_NAME}
+#     EXPORT ${OCLMODULE_TARGETS_NAME}
+#     LIBRARY DESTINATION lib
+#     INCLUDES DESTINATION include
+# )
+# set_target_properties(${USDPLUGIN_PYTHON_NAME}
+# PROPERTIES
+#     INSTALL_RPATH "@loader_path/../../../ocl/"
+# )
 
 install(
-    TARGETS ${OCLMODULE_NAME}
-    EXPORT ${OCLMODULE_TARGETS_NAME}
-    LIBRARY DESTINATION lib
-    INCLUDES DESTINATION include
+    FILES ${OCL}
+    DESTINATION include/ocl
 )

@@ -86,7 +86,7 @@ VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSourc
 }
 
 
-const bool HairProcHairProceduralDeformer::InitOCL() {
+bool HairProcHairProceduralDeformer::InitOCL() {
     TRACE_FUNCTION();
 
     ocl::DeformerContext* _oclContext = ocl::DeformerContext::getInstance();

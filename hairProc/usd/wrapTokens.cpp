@@ -22,7 +22,15 @@
 // language governing permissions and limitations under the Apache License.
 //
 // GENERATED FILE.  DO NOT EDIT.
-#include <boost/python/class.hpp>
+
+#ifdef BUILD_HOUDINI_PLUGIN
+    #include <hboost/python/class.hpp>
+    using namespace hboost;
+#else
+    #include <boost/python/class.hpp>
+    using namespace boost;
+#endif
+
 #include "./tokens.h"
 
 PXR_NAMESPACE_USING_DIRECTIVE
@@ -51,19 +59,19 @@ void
 _AddToken(T& cls, const char* name, const TfToken& token)
 {
     cls.add_static_property(name,
-                            boost::python::make_function(
+                            python::make_function(
                                 _WrapStaticToken(&token),
-                                boost::python::return_value_policy<
-                                    boost::python::return_by_value>(),
-                                boost::mpl::vector1<std::string>()));
+                                python::return_value_policy<
+                                    python::return_by_value>(),
+                                mpl::vector1<std::string>()));
 }
 
 } // anonymous
 
 void wrapHairProcTokens()
 {
-    boost::python::class_<HairProcTokensType, boost::noncopyable>
-        cls("Tokens", boost::python::no_init);
+    python::class_<HairProcTokensType, noncopyable>
+        cls("Tokens", python::no_init);
     _AddToken(cls, "hairProcParamuv", HairProcTokens->hairProcParamuv);
     _AddToken(cls, "hairProcPrim", HairProcTokens->hairProcPrim);
     _AddToken(cls, "hairProcRest", HairProcTokens->hairProcRest);

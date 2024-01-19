@@ -27,7 +27,7 @@ public:
                                    const SdfPath& primPath);
 
     VtVec3fArray Deform(const HdSampledDataSource::Time& shutterOffset);
-    const bool InitOCL();
+    bool InitOCL();
 
 private:
     VtArray<HdContainerDataSourceHandle> _targetContainers;

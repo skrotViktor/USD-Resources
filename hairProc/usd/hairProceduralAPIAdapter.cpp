@@ -11,6 +11,8 @@
 
 #include "pxr/usdImaging/usdImaging/adapterRegistry.h"
 
+#include <iostream>
+
 PXR_NAMESPACE_OPEN_SCOPE
 
 TF_DEFINE_PRIVATE_TOKENS(
@@ -32,7 +34,6 @@ HairProcHairProceduralAPIAdapter::~HairProcHairProceduralAPIAdapter() {}
 
 // DATA SOURCE OVERRIDES
 
-namespace {
 class HairProcHairProceduralTargetDataSource : public HdPathArrayDataSource {
 public:
     HD_DECLARE_DATASOURCE(HairProcHairProceduralTargetDataSource);
@@ -121,7 +122,7 @@ private:
 };
 HD_DECLARE_DATASOURCE_HANDLES(_HairProcHairProceduralDataSource)
 
-} // close anonymous namespace
+// } // close anonymous namespace
 
 
 HdContainerDataSourceHandle
@@ -140,7 +141,6 @@ HairProcHairProceduralAPIAdapter::InvalidateImagingSubprim(
         TfToken const& appliedInstanceName,
         TfTokenVector const& properties,
         const UsdImagingPropertyInvalidationType invalidationType) {
-
     return HdDataSourceLocatorSet();
 }
 

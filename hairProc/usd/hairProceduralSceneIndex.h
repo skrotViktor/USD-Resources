@@ -10,12 +10,13 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 TF_DECLARE_REF_PTRS(HairProcHairProceduralSceneIndex);
 
-class HairProcHairProceduralSceneIndex : public HdSingleInputFilteringSceneIndexBase 
+class HairProcHairProceduralSceneIndex final : public HdSingleInputFilteringSceneIndexBase 
 {
 public:
+
     HAIRPROC_API
     static HairProcHairProceduralSceneIndexRefPtr New(
-        const HdSceneIndexBaseRefPtr& inputSceneIdndex);
+        const HdSceneIndexBaseRefPtr& inputSceneIndex);
 
     HAIRPROC_API
     HdSceneIndexPrim GetPrim(const SdfPath& primPath) const override;
@@ -25,6 +26,7 @@ public:
 
 protected:
     HairProcHairProceduralSceneIndex(const HdSceneIndexBaseRefPtr& inputSceneIndex);
+
     void _PrimsAdded(const HdSceneIndexBase& sender, const HdSceneIndexObserver::AddedPrimEntries& entries) override;
 
     void _PrimsRemoved(const HdSceneIndexBase& sender, const HdSceneIndexObserver::RemovedPrimEntries& entried) override;

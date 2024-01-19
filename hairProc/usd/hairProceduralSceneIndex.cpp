@@ -8,22 +8,32 @@
 #include "pxr/base/trace/trace.h"
 #include "pxr/base/trace/reporter.h"
 
+#include "pxr/usdImaging/usdImaging/stageSceneIndex.h"
+// #include "pxr/imaging/hd/renderIndex.h"
+
+#include "pxr/usdImaging/usdImaging/adapterRegistry.h"
+// #include "pxr/usdImaging/usdImaging/adapterManager.h"
+
 #include <memory>
 #include <iostream>
 
 PXR_NAMESPACE_OPEN_SCOPE
+
 
 HairProcHairProceduralSceneIndexRefPtr
 HairProcHairProceduralSceneIndex::New(const HdSceneIndexBaseRefPtr& inputSceneIndex) {
     return TfCreateRefPtr(new HairProcHairProceduralSceneIndex(inputSceneIndex));
 }
 
+
 HairProcHairProceduralSceneIndex::HairProcHairProceduralSceneIndex(const HdSceneIndexBaseRefPtr& inputSceneIndex) 
-        : HdSingleInputFilteringSceneIndexBase(inputSceneIndex) {}
+        : HdSingleInputFilteringSceneIndexBase(inputSceneIndex) {
+}
 
 
 HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPath) const {
     HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(primPath);
+
     if (prim.primType == HdPrimTypeTokens->basisCurves) {
 
         HdBasisCurvesSchema curveSchema = HdBasisCurvesSchema::GetFromParent(prim.dataSource);
@@ -51,6 +61,7 @@ HairProcHairProceduralSceneIndex::_PrimsAdded(
     if (!_IsObserved()) {
         return;
     }
+
     for (const HdSceneIndexObserver::AddedPrimEntry& entry: entries) {
         if (entry.primType == HdPrimTypeTokens->basisCurves) {
 
@@ -64,6 +75,7 @@ HairProcHairProceduralSceneIndex::_PrimsAdded(
             }
         }
     }
+
     _SendPrimsAdded(entries);
 }
 

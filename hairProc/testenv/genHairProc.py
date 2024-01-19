@@ -2,7 +2,6 @@ from pxr import Usd, UsdGeom, Sdf
 
 from vik import HairProc
 import numpy as np
-
 import os
 
 
@@ -13,7 +12,7 @@ def open_stage(stage_name):
     return stage
 
 
-def build_plane(stage, name="plane", w=2, h=2, pos=(0,0,0)):
+def build_plane(stage, name="/plane", w=2, h=2, pos=(0,0,0)):
     """
     Build a simple plane for testing hair procedural
     """
@@ -23,14 +22,14 @@ def build_plane(stage, name="plane", w=2, h=2, pos=(0,0,0)):
     pts[3] = (pos[0] + w, 0, pos[2])
     pts[2] = (pos[0] - w, 0, pos[2])
 
-    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/" + name))
+    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path(name))
     mesh.CreatePointsAttr(pts)
     mesh.CreateFaceVertexIndicesAttr([0,1,2,3])
     mesh.CreateFaceVertexCountsAttr([4])
     return mesh
 
 
-def build_tube(stage, name="tube", rows=5, columns=5, radius=1, height=2, caps=True, pos=(0,0,0)):
+def build_tube(stage, name="/tube", rows=5, columns=5, radius=1, height=2, caps=True, pos=(0,0,0)):
     """
     Build a tube for testing hair procedural
     """
@@ -77,7 +76,7 @@ def build_tube(stage, name="tube", rows=5, columns=5, radius=1, height=2, caps=T
             indices.append(idx)
             counts.append(4)
 
-    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path("/"+name))
+    mesh = UsdGeom.Mesh.Define(stage, Sdf.Path(name))
     mesh.CreatePointsAttr(pts)
     mesh.CreateFaceVertexIndicesAttr(indices)
     mesh.CreateFaceVertexCountsAttr(counts)
@@ -251,9 +250,9 @@ def do_stuffs(stage):
     """
     Build the stage for testing hair procedural
     """
-    tube = build_tube(stage, "tube", rows=5, columns=10, height=10, caps=True)
-    plane1 = build_plane(stage, "plane1",  w=5, h=5, pos=(10,0,0))
-    plane2 = build_plane(stage, "plane2",  w=5, h=5, pos=(20,0,0))
+    tube = build_tube(stage, "/tube", rows=5, columns=10, height=10, caps=True)
+    plane1 = build_plane(stage, "/plane1",  w=5, h=5, pos=(10,0,0))
+    plane2 = build_plane(stage, "/plane2",  w=5, h=5, pos=(20,0,0))
     
     build_hair(stage, tube, count=1000, path="/curves1")
     build_hair(stage, plane1, count=1000, path="/curves2")
