@@ -4,8 +4,6 @@ project(hairProc VERSION 0.1.0 LANGUAGES CXX)
 set(BUILD_USD_PLUGIN 0)
 set(BUILD_HOUDINI_PLUGIN 1)
 
-set(CMAKE_OSX_ARCHITECTURES "x86_64")
-
 # Set the C++ requirements
 set(CMAKE_CXX_STANDARD 17) # c++ 17 used for some convenience functions
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
