@@ -15,7 +15,7 @@ class HairProcHairProceduralAPIAdapter : public UsdImagingAPISchemaAdapter {
 public:
     HAIRPROC_API
     ~HairProcHairProceduralAPIAdapter() override;
-
+    
     using BaseAdapter = UsdImagingAPISchemaAdapter;
 
     HAIRPROC_API

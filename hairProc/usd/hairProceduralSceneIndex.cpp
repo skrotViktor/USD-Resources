@@ -25,51 +25,15 @@ HairProcHairProceduralSceneIndex::New(const HdSceneIndexBaseRefPtr& inputSceneIn
     return TfCreateRefPtr(new HairProcHairProceduralSceneIndex(inputSceneIndex));
 }
 
-static UsdImagingStageSceneIndexRefPtr
-FindUsdImagingSceneIndex(const std::vector<HdSceneIndexBaseRefPtr>& inputScenes, int depth=0)
-{
-    TfRefPtr<UsdImagingStageSceneIndex> retVal;
-
-    for (size_t i = 0; i < inputScenes.size(); i++) {
-        HdSceneIndexBaseRefPtr const &sceneIdx = inputScenes[i];
-        if (UsdImagingStageSceneIndexRefPtr const imagingSI = TfDynamic_cast<UsdImagingStageSceneIndexRefPtr>(sceneIdx)) {
-            std::cout << std::string(depth*2, ' ') << imagingSI->GetDisplayName() << std::endl;
-
-            retVal = imagingSI;
-            break;
-        }
-        if (HdFilteringSceneIndexBaseRefPtr const filteringSi = TfDynamic_cast<HdFilteringSceneIndexBaseRefPtr>(sceneIdx)) {
-            std::cout << std::string(depth*2, ' ') << filteringSi->GetDisplayName() << std::endl;
-
-            retVal = FindUsdImagingSceneIndex(filteringSi->GetInputScenes(), depth+1);
-            if (retVal) {
-                break;
-            }
-        }
-    }
-    return retVal;
-}
-
-void dumpSceneIndexTree(HdSceneIndexBaseRefPtr sceneIndex, int depth = 0)
-{
-    std::cout << std::string(depth*2, ' ')
-              << sceneIndex->GetDisplayName()
-              << std::endl;
-    auto filteringIndex = TfDynamic_cast<HdFilteringSceneIndexBaseRefPtr>(sceneIndex);
-    if (filteringIndex)
-        for (auto &&inputIndex : filteringIndex->GetInputScenes())
-            dumpSceneIndexTree(inputIndex, depth+1);
-}
 
 HairProcHairProceduralSceneIndex::HairProcHairProceduralSceneIndex(const HdSceneIndexBaseRefPtr& inputSceneIndex) 
         : HdSingleInputFilteringSceneIndexBase(inputSceneIndex) {
-
-    // dumpSceneIndexTree(inputSceneIndex);
 }
 
 
 HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPath) const {
     HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(primPath);
+
     if (prim.primType == HdPrimTypeTokens->basisCurves) {
 
         HdBasisCurvesSchema curveSchema = HdBasisCurvesSchema::GetFromParent(prim.dataSource);
@@ -106,27 +70,10 @@ HairProcHairProceduralSceneIndex::_PrimsAdded(
             HdPrimvarsSchema primvarSchema = HdPrimvarsSchema::GetFromParent(prim.dataSource);
             HairProcHairProceduralSchema hairProcSchema = HairProcHairProceduralSchema::GetFromParent(prim.dataSource);
 
-            // std::cout<<"SCHEMA: " << hairProcSchema.IsDefined() << std::endl;
             if (curveSchema && primvarSchema && hairProcSchema) {
-                std::cout<<"FOUND PRIM: " << entry.primPath << std::endl;
                 _init_deformer(entry.primPath, hairProcSchema, curveSchema, primvarSchema);
             }
         }
-    }
-
-    HdSceneIndexNameRegistry& reg = HdSceneIndexNameRegistry::GetInstance();
-    for(auto i: reg.GetRegisteredNames()) {
-        std::cout<<"SCENE INDEX NAME REG: " << i<<std::endl;
-    }
-
-    std::cout<<"SEARCHING FOR SCENE INDEX...."<<std::endl;
-    UsdImagingStageSceneIndexRefPtr usdImagingSi;
-    if (auto filteringIdx = TfDynamic_cast<HdFilteringSceneIndexBaseRefPtr>(_GetInputSceneIndex())) {   
-        usdImagingSi = FindUsdImagingSceneIndex(filteringIdx->GetInputScenes());
-    }
-
-    if (usdImagingSi) {
-       std::cout<<"FOUND SCENE INDEX: " << usdImagingSi->GetDisplayName()<<std::endl; 
     }
 
     _SendPrimsAdded(entries);

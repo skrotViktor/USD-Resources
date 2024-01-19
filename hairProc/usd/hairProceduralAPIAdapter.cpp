@@ -131,8 +131,6 @@ HairProcHairProceduralAPIAdapter::GetImagingSubprimData(
         TfToken const& subprim,
         TfToken const& appliedInstanceName,
         const UsdImagingDataSourceStageGlobals& stageGlobals) {
-
-    std::cout<<"API ADAPTER GET SUBPRIM" << std::endl;
     return HdRetainedContainerDataSource::New(_tokens->hairProcedural, _HairProcHairProceduralDataSource::New(prim, stageGlobals));
 }
 
@@ -143,8 +141,6 @@ HairProcHairProceduralAPIAdapter::InvalidateImagingSubprim(
         TfToken const& appliedInstanceName,
         TfTokenVector const& properties,
         const UsdImagingPropertyInvalidationType invalidationType) {
-
-    std::cout<<"API ADAPTER INVALIDATE SUBPRIM" << std::endl;
     return HdDataSourceLocatorSet();
 }
 
