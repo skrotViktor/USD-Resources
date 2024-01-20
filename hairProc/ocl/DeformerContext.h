@@ -100,7 +100,7 @@ private:
 
     cl::string _LoadShader(const std::string_view& fileName, int* err);
 
-    cl::vector<cl::string>  _kernelNames;
+    // cl::vector<cl::string>  _kernelNames;
     cl::vector<cl::string>  _kernelCodes;
 
     cl::Context                         _context;

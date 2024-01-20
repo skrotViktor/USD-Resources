@@ -14,7 +14,6 @@
 #include "pxr/base/gf/matrix4f.h"
 
 #include <iostream>
-#include <thread>
 #include <numeric>
 
 
@@ -136,6 +135,7 @@ bool HairProcHairProceduralDeformer::InitOCL() {
     size = srcPrimLengths.size();
     srcPrimIndices.resize(size);
     total = 0;
+
     for (int i = 0; i < size; i++) {
         srcPrimIndices[i] = total;
         total += srcPrimLengths[i];

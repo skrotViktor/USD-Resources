@@ -33,7 +33,6 @@ HairProcHairProceduralSceneIndex::HairProcHairProceduralSceneIndex(const HdScene
 
 HdSceneIndexPrim HairProcHairProceduralSceneIndex::GetPrim(const SdfPath& primPath) const {
     HdSceneIndexPrim prim = _GetInputSceneIndex()->GetPrim(primPath);
-
     if (prim.primType == HdPrimTypeTokens->basisCurves) {
 
         HdBasisCurvesSchema curveSchema = HdBasisCurvesSchema::GetFromParent(prim.dataSource);
@@ -140,6 +139,7 @@ void HairProcHairProceduralSceneIndex::_init_deformer(
 
     HairProcHairProceduralDeformerSharedPtr deformer = std::make_shared<HairProcHairProceduralDeformer>(targetDs, sourceDs, primPath);
 
+    // Report deformer setup times
     TraceCollector::GetInstance().SetEnabled(false);
     TraceReporter::GetGlobalReporter()->ReportTimes(std::cout);
 

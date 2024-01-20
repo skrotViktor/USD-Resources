@@ -68,12 +68,18 @@ int DeformerContext::Build() {
 }
 
 KernelHandle* DeformerContext::AddKernel(const std::string& kernelName, const std::string& key, int* err) {
+    if (_kernels.find(kernelName) != _kernels.end()) {
+        printf("Error: Kernel with name %s already exists\n", kernelName.c_str());
+        return nullptr;
+    }
+
     cl::Kernel kernel(_program, kernelName.c_str(), err);
     if (err != CL_SUCCESS) {
         initialized = false;
         printf("Error: Failed to create compute kernel with name %s\n", kernelName.c_str());
         return nullptr;
     }
+
     KernelHandle handle;
     handle.kernel = kernel;
     handle.queue = &_queue;

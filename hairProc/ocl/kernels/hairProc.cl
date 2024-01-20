@@ -171,12 +171,10 @@ __kernel void HairProc(
         return;
     }
 
-
     int pt1 = tgt_prmpts_indices[tgt_prmpts_offset[tgt_prm] + 1];
     int pt2 = tgt_prmpts_indices[tgt_prmpts_offset[tgt_prm] + 2];
     int pt3;
 
-    // float3
     float3 p0 = vload3(pt0, tgt_p);
     float3 p1 = vload3(pt1, tgt_p);
     float3 p2 = vload3(pt2, tgt_p);
@@ -196,7 +194,6 @@ __kernel void HairProc(
     int src_start = src_primpts_indices[idx];
     int src_end = src_start + src_primpts_lengths[idx];
 
-    // float3 translate = vload3(0, tgt_translate);
     float3 root = vload3(src_start, src_p);
     float3 offset = new_pos - root;
 
