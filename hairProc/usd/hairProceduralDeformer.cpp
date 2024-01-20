@@ -158,16 +158,16 @@ bool HairProcHairProceduralDeformer::InitOCL() {
         }
     }
 
-    err  = tgtKernel->AddArgument<float>(CL_MEM_READ_WRITE, "tgtPos", captRest.size() * 3, true);
+    err  = tgtKernel->AddArgument<float>(CL_MEM_READ_WRITE, "tgtPos", captRest.size() * 3);
 
-    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtIndices", tgtPrimIndices.size(), true, tgtPrimIndices.data());
-    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtLengthsa", tgtPrimLengths.size(), true, tgtPrimLengths.data());
-    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtOffset", tgtPrimOffset.size(), true, tgtPrimOffset.data());
+    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtIndices", tgtPrimIndices.size(), tgtPrimIndices.data());
+    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtLengthsa", tgtPrimLengths.size(), tgtPrimLengths.data());
+    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtOffset", tgtPrimOffset.size(), tgtPrimOffset.data());
 
-    err  = tgtKernel->AddArgument<float>(CL_MEM_READ_ONLY, "tgtXform", 16, true);
-    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "unique_prims", _uniquePrims.size(), true, _uniquePrims.data());
+    err  = tgtKernel->AddArgument<float>(CL_MEM_READ_ONLY, "tgtXform", 16);
+    err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "unique_prims", _uniquePrims.size(), _uniquePrims.data());
 
-    err |= tgtKernel->AddArgument<float>(CL_MEM_WRITE_ONLY, "result", _uniquePrims.size() * 9, true); // result
+    err |= tgtKernel->AddArgument<float>(CL_MEM_WRITE_ONLY, "result", _uniquePrims.size() * 9);
     err |= tgtKernel->AddArgument<int>(CL_MEM_READ_ONLY, "invert", 1, false);
 
     if (err != CL_SUCCESS) {
@@ -178,22 +178,22 @@ bool HairProcHairProceduralDeformer::InitOCL() {
     GfMatrix4f xform = static_cast<GfMatrix4f>(xformSchema.GetMatrix()->GetTypedValue(t));
     VtMatrix3fArray targetRestFrames = _CalcTargetFrames(0, true, captRest, xform);
 
-    err  = procKernel->AddArgument<float>(CL_MEM_WRITE_ONLY, "result", srcPos.size() * 3, true);
-    err  = procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "srcPos", srcPos.size() * 3, true, srcPos.data()->data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "srcLengths", srcPrimLengths.size(), true, srcPrimLengths.data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "srcIndices", srcPrimIndices.size(), true, srcPrimIndices.data());
+    err  = procKernel->AddArgument<float>(CL_MEM_WRITE_ONLY, "result", srcPos.size() * 3);
+    err  = procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "srcPos", srcPos.size() * 3, srcPos.data()->data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "srcLengths", srcPrimLengths.size(), srcPrimLengths.data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "srcIndices", srcPrimIndices.size(), srcPrimIndices.data());
 
-    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "tgtPos", tgtPos.size() * 3, true);
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtLengths", tgtPrimLengths.size(), true, tgtPrimLengths.data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtIndices", tgtPrimIndices.size(), true, tgtPrimIndices.data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtOffsets", tgtPrimOffset.size(), true, tgtPrimOffset.data());
+    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "tgtPos", tgtPos.size() * 3);
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtLengths", tgtPrimLengths.size(), tgtPrimLengths.data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtIndices", tgtPrimIndices.size(), tgtPrimIndices.data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "tgtOffsets", tgtPrimOffset.size(), tgtPrimOffset.data());
 
-    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "restFrames", _uniquePrims.size() * 9, true, targetRestFrames.data()->data());
-    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "frames", _uniquePrims.size() * 9, true);
+    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "restFrames", _uniquePrims.size() * 9, targetRestFrames.data()->data());
+    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "frames", _uniquePrims.size() * 9);
 
-    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "captUv", captUv.size() * 2, true, captUv.data()->data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "captPrim", _sortedCaptPrims.size(), true, _sortedCaptPrims.data());
-    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "uniquePrims", _uniquePrims.size(), true, _uniquePrims.data());
+    err |= procKernel->AddArgument<float>(CL_MEM_READ_ONLY, "captUv", captUv.size() * 2, captUv.data()->data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "captPrim", _sortedCaptPrims.size(), _sortedCaptPrims.data());
+    err |= procKernel->AddArgument<int>(CL_MEM_READ_ONLY, "uniquePrims", _uniquePrims.size(), _uniquePrims.data());
 
     if (err != CL_SUCCESS) {
         std::cout<<"Failed to add parameters to Deformer Context"<<std::endl;
@@ -218,7 +218,7 @@ VtMatrix3fArray HairProcHairProceduralDeformer::_CalcTargetFrames(
     tgtHandle->SetBufferData<float>(xform.data(), "tgtXform", 16);
     tgtHandle->SetBufferData<float>(pts.data()->data(), "tgtPos", pts.size() * 3);
 
-    tgtHandle->SetArgument<int>(7, (int)invert);
+    tgtHandle->SetArgument<int>("invert", (int)invert);
 
     const size_t global = _uniquePrims.size();
 

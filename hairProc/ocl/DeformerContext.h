@@ -21,16 +21,20 @@ namespace ocl {
 
 struct KernelHandle {
     cl::Kernel kernel;
-    std::unordered_map<std::string, cl::Buffer> arguments;
+    std::unordered_map<std::string, int> arguments;
+    std::unordered_map<std::string, cl::Buffer> buffers;
+    
     cl::CommandQueue* queue;
     cl::Context* context;
 
     int argCount = 0;
 
     template<typename T>
-    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, T* data=nullptr);
+    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, T* data);
     template<typename T>
-    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, const T& data);
+    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const T& data);
+    template<typename T = bool>
+    int AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer=true);
 
     template<typename mem, typename T>
     int SetArgument(const int argIndex, T* data);
@@ -109,35 +113,42 @@ private:
 };
 
 template<typename T>
-inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, T* data) {
-    if (createBuffer) {
-        cl::Buffer d_data(*context, flags, sizeof(T) * size);
+inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, T* data) {
+    cl::Buffer d_data(*context, flags, sizeof(T) * size);
 
-        if (data != nullptr) {
-            SetBufferData(data, d_data, size);
-        }
-
-        SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
-        arguments.insert({name, d_data});
-    } else {
-        SetArgument<T, T>(argCount, data);
+    if (data != nullptr) {
+        SetBufferData(data, d_data, size);
     }
+
+    SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
+    buffers.insert({name, d_data});
+
+    arguments.insert({name, argCount});
     argCount++;
     return 0;
 }
 
 template<typename T>
-inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer, const T& data) {
+inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const T& data) {
+    cl::Buffer d_data(*context, flags, sizeof(T) * size);
+
+    SetBufferData(&data, d_data, size);        
+
+    SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
+    buffers.insert({name, d_data});
+
+    arguments.insert({name, argCount});
+    argCount++;
+    return 0;
+}
+
+template<typename T>
+inline int KernelHandle::AddArgument(cl_mem_flags flags, const std::string& name, const size_t& size, const bool createBuffer) {
     if (createBuffer) {
-        cl::Buffer d_data(*context, flags, sizeof(T) * size);
-
-        SetBufferData(&data, d_data, size);        
-
-        SetArgument<cl_mem, cl::Buffer>(argCount, &d_data);
-        arguments.insert({name, d_data});
-    } else {
-        SetArgument<T>(argCount, data);
+        return AddArgument<T>(flags, name, size, nullptr);
     }
+    SetArgument<T>(argCount, (T*)nullptr);
+    arguments.insert({name, argCount});
     argCount++;
     return 0;
 }
@@ -156,13 +167,13 @@ inline int KernelHandle::SetArgument(const int argIndex, const T& data) {
 
 template<typename mem, typename T>
 inline int KernelHandle::SetArgument(const std::string& name, T* data) {
-    kernel.setArg<T>(arguments[name], data);
+    SetArgument(arguments[name], data);
     return 0;
 }
 
 template<typename T>
 inline int KernelHandle::SetArgument(const std::string& name, const T& data) {
-    kernel.setArg<T>(arguments[name], data);
+    SetArgument(arguments[name], data);
     return 0;
 }
 
@@ -182,7 +193,7 @@ inline int KernelHandle::SetBufferData(T* data, const std::string& bufferName, c
         printf("Error: Buffer %s is not recognized!\n", bufferName.c_str());
         return 1;
     }
-    return SetBufferData(data, arguments[bufferName], size);
+    return SetBufferData(data, buffers[bufferName], size);
 }
 
 template<typename T>
@@ -197,7 +208,7 @@ inline int KernelHandle::ReadBufferData(T* data, cl::Buffer buffer, const size_t
 
 template<typename T>
 inline int KernelHandle::ReadBufferData(T* data, const std::string& bufferName, const size_t size) {
-    return ReadBufferData(data, arguments[bufferName], size);
+    return ReadBufferData(data, buffers[bufferName], size);
 }
 
 }

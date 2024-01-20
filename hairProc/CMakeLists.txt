@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(hairProc VERSION 0.1.0 LANGUAGES CXX)
 
-set(BUILD_USD_PLUGIN 0)
+set(BUILD_USD_PLUGIN 1)
 set(BUILD_HOUDINI_PLUGIN 1)
 
 # Set the C++ requirements
