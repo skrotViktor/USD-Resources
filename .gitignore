@@ -1,4 +1,4 @@
 *.DS_Store
 *.vscode
-*.gitignore
 build
+.gitignore
