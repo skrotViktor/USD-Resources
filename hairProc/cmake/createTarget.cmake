@@ -35,9 +35,6 @@ function(create_target TARGET)
         "${multiValueArgs}"
         ${ARGN}
     )
-
-    
-
     get_py_module_name(${TARGET} MODULE_NAME)
 
     add_library(${TARGET}

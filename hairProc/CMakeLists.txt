@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Target names
 set(USDPLUGIN_NAME hairProc) # Need to match schema library name
 set(PYPACKAGE_NAME vik) # The package name used for python. "from vik import HairProc"
-set(OCLMODULE_NAME ocl) # The name of the opencl library
+# set(OCLMODULE_NAME ocl) # The name of the opencl library
 
 if (${BUILD_USD_PLUGIN} AND NOT DEFINED USD_INSTALL_ROOT)
     message(FATAL_ERROR "Missing USD_INSTALL_ROOT")
@@ -35,4 +35,8 @@ include(cmake/createTarget.cmake)
 
 # The subdirectories defines our actual library targets
 add_subdirectory(usd)
-add_subdirectory(ocl)
+
+install(DIRECTORY
+    kernels
+    DESTINATION ocl
+)

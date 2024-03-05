@@ -1,13 +1,12 @@
-
-# SET DEFAULTS
-
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 list(FILTER sources EXCLUDE REGEX "./module*|./wrap*")
 file(GLOB py_sources "[module|wrap]*.cpp")
 
+find_package(peasyocl REQUIRED)
+
 if (${BUILD_USD_PLUGIN})
-    find_package(Python3 REQUIRED)
+find_package(Python3 REQUIRED)
     set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${USD_INSTALL_ROOT})
     find_package(pxr REQUIRED)
 
@@ -24,10 +23,10 @@ if (${BUILD_USD_PLUGIN})
         INCLUDE_DIRS
             ${PYTHON_INCLUDE_PATH}
             ${PXR_INCLUDE_DIRS}
-            ".."
+            ${peasyocl_INCLUDE_DIR}
         LIBS
             ${PXR_LIBRARIES}
-            ${OCLMODULE_NAME}
+            peasyocl
     )
 endif()
 
@@ -83,11 +82,11 @@ if (${BUILD_HOUDINI_PLUGIN})
         INCLUDE_DIRS
             ${PYTHON_INCLUDE_PATH}
             ${PXR_INCLUDE_DIR}
-            ".."
+            ${peasyocl_INCLUDE_DIR}
         LIBS
             Houdini
             ${PYTHON_FRAMEWORK}
-            ${OCLMODULE_NAME}
+            peasyocl
         )
 
     endif()

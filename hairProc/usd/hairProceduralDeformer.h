@@ -14,8 +14,6 @@
 #include "hairProceduralSchema.h"
 #include "api.h"
 
-#include "ocl/DeformerContext.h"
-
 PXR_NAMESPACE_OPEN_SCOPE
 
 TF_DECLARE_REF_PTRS(HairProcHairProceduralDeformer);

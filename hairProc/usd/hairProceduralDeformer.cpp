@@ -16,6 +16,8 @@
 #include <iostream>
 #include <numeric>
 
+#include "peasyocl/Context.h"
+
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -58,8 +60,8 @@ VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSourc
     VtVec3fArray srcPos = srcPrimvarsSchema.GetPrimvar(HdTokens->points).GetPrimvarValue()->GetValue(shutterOffset).UncheckedGet<VtArray<GfVec3f>>();
     VtVec3fArray tgtPos = tgtPrimvarsSchema.GetPrimvar(HdTokens->points).GetPrimvarValue()->GetValue(shutterOffset).UncheckedGet<VtArray<GfVec3f>>();
 
-    ocl::DeformerContext* _oclContext = ocl::DeformerContext::getInstance();
-    ocl::KernelHandle* procKernel = _oclContext->GetKernelHandle(_primPath + "HairProc");
+    peasyocl::Context* _oclContext = peasyocl::Context::getInstance();
+    peasyocl::KernelHandle* procKernel = _oclContext->GetKernelHandle(_primPath + "HairProc");
 
     VtMatrix3fArray tgtFrames = _CalcTargetFrames(shutterOffset, false, tgtPos, xform);
 
@@ -88,12 +90,12 @@ VtVec3fArray HairProcHairProceduralDeformer::_DeformOCL(const HdSampledDataSourc
 bool HairProcHairProceduralDeformer::InitOCL() {
     TRACE_FUNCTION();
 
-    ocl::DeformerContext* _oclContext = ocl::DeformerContext::getInstance();
+    peasyocl::Context* _oclContext = peasyocl::Context::getInstance();
     _oclContext->Init();
     _oclContext->AddSource("hairProc.cl");
     _oclContext->Build();
-    ocl::KernelHandle* procKernel = _oclContext->AddKernel("HairProc", _primPath + "HairProc");
-    ocl::KernelHandle* tgtKernel = _oclContext->AddKernel("CalcTargetFrames", _primPath + "TargetFrames");
+    peasyocl::KernelHandle* procKernel = _oclContext->AddKernel("HairProc", _primPath + "HairProc");
+    peasyocl::KernelHandle* tgtKernel = _oclContext->AddKernel("CalcTargetFrames", _primPath + "TargetFrames");
 
     /* TODO: Error check each Get request */
     auto tgtPrimvarsSchema = HdPrimvarsSchema::GetFromParent(_targetContainers[0]);
@@ -212,8 +214,8 @@ VtMatrix3fArray HairProcHairProceduralDeformer::_CalcTargetFrames(
     auto srcCurveSchema = HdBasisCurvesSchema::GetFromParent(_sourceContainer);
     auto srcProcSchema = HairProcHairProceduralSchema::GetFromParent(_sourceContainer);
 
-    ocl::DeformerContext* _oclContext = ocl::DeformerContext::getInstance();
-    ocl::KernelHandle* tgtHandle = _oclContext->GetKernelHandle(_primPath + "TargetFrames");
+    peasyocl::Context* _oclContext = peasyocl::Context::getInstance();
+    peasyocl::KernelHandle* tgtHandle = _oclContext->GetKernelHandle(_primPath + "TargetFrames");
 
     tgtHandle->SetBufferData<float>(xform.data(), "tgtXform", 16);
     tgtHandle->SetBufferData<float>(pts.data()->data(), "tgtPos", pts.size() * 3);

@@ -8,12 +8,6 @@
 #include "pxr/base/trace/trace.h"
 #include "pxr/base/trace/reporter.h"
 
-#include "pxr/usdImaging/usdImaging/stageSceneIndex.h"
-// #include "pxr/imaging/hd/renderIndex.h"
-
-#include "pxr/usdImaging/usdImaging/adapterRegistry.h"
-// #include "pxr/usdImaging/usdImaging/adapterManager.h"
-
 #include <memory>
 #include <iostream>
 
