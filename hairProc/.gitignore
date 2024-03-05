@@ -1,6 +1,3 @@
 build
-*.DS_store
-.vscode
-build
 testenv/render/*
 testenv/hairProc.usda

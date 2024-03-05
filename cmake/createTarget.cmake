@@ -122,7 +122,6 @@ function(create_target TARGET)
     endif()
 
     # PYTHON
-    # message("${PY_SOURCES}")
     if (args_PY_SOURCES)
         set(USDPLUGIN_PYTHON_NAME _${TARGET})
 

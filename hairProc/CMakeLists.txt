@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
-project(hairProc VERSION 0.1.0 LANGUAGES CXX)
+
 
 set(BUILD_USD_PLUGIN 1)
 set(BUILD_HOUDINI_PLUGIN 1)
@@ -11,7 +10,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Target names
 set(USDPLUGIN_NAME hairProc) # Need to match schema library name
 set(PYPACKAGE_NAME vik) # The package name used for python. "from vik import HairProc"
-# set(OCLMODULE_NAME ocl) # The name of the opencl library
 
 if (${BUILD_USD_PLUGIN} AND NOT DEFINED USD_INSTALL_ROOT)
     message(FATAL_ERROR "Missing USD_INSTALL_ROOT")
@@ -23,15 +21,7 @@ if (${BUILD_HOUDINI_PLUGIN} AND NOT DEFINED HOUDINI_INSTALL_ROOT)
     return()
 endif()
 
-# Some RPATH stuff. Don't think this is how you do it....
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 
-# Set some compile definitions. 
-add_definitions(-D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION) # Enables linking USD libraries with C++17
-
-include(cmake/createTarget.cmake)
 
 # The subdirectories defines our actual library targets
 add_subdirectory(usd)
