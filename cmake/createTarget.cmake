@@ -179,11 +179,6 @@ function(create_target TARGET)
             DESTINATION ${INSTALL_WRAPPER_DIR}
         )
 
-        install(
-            FILES __packageinit__.py
-            DESTINATION ${INSTALL_PYTHONPACKAGE_DIR}
-            RENAME __init__.py
-        )
     endif()
 
 endfunction()

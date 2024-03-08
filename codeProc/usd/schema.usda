@@ -1,0 +1,83 @@
+#usda 1.0
+(
+    """ This file contains an example schemata for code generation using
+        usdGenSchema.
+    """
+    subLayers = [
+        @usd/schema.usda@
+    ]
+)
+
+over "GLOBAL" (
+    customData = {
+        string libraryName       = "codeProc"
+        string libraryPath       = "."
+        bool useLiteralIdentifier = 0
+    }
+) {}
+
+class "CodeProceduralAPI"
+(
+    inherits = </APISchemaBase>
+    doc = """API for writing opencl code directly on a prim and invoke at render time:
+        - codepr oc:target: The animated geometry
+    """
+    customData = {
+        string className = "CodeProceduralAPI"
+    }
+)
+{
+    rel codeproc:readWrite (
+        customData = {
+            string apiName = "readWrite"
+        }
+        doc = """The target properties which opencl can read from and write to"""
+    )
+
+    rel codeproc:write (
+        customData = {
+            string apiName = "write"
+        }
+        doc = """The target properties which opencl can only write to"""
+    )
+
+    rel codeproc:read (
+        customData = {
+            string apiName = "read"
+        }
+        doc = """The target properties which opencl can only read from"""
+    )
+
+    int codeproc:workgroupSize (
+        customData = {
+            string apiName = "workgroupSize"
+        }
+        doc = """The global workgroup size. If not specified, will use first writeable argument"""
+    )
+
+    string codeproc:mappings (
+        customData = {
+            string apiName = "mappings"
+        }
+        doc = """Settings for each argument input of the opencl kernel in JSON format. The layout of the dictionary should be:
+        {
+            readWrite: [
+                {
+                    name: argumentName,
+                    type: SdfValueTypeName.float3,
+                    isArray: 0,
+                },
+                ...
+            ],
+            write: [....]
+        }
+        """
+    )
+
+    string codeproc:code (
+        customData = {
+            string apiName = "code"
+        }
+        doc = """The opencl kernel code"""
+    )
+}

@@ -1,3 +1,4 @@
 build
 testenv/render/*
 testenv/hairProc.usda
+.gitignore
