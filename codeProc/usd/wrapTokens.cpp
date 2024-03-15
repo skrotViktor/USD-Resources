@@ -22,13 +22,12 @@
 // language governing permissions and limitations under the Apache License.
 //
 // GENERATED FILE.  DO NOT EDIT.
-#include <boost/python/class.hpp>
 #ifdef BUILD_HOUDINI_PLUGIN
     #include <hboost/python.hpp>
-    using namespace hboost::python;
+    using namespace hboost;
 #else
     #include <boost/python.hpp>
-    using namespace boost::python;
+    using namespace boost;
 #endif
 #include "./tokens.h"
 
@@ -58,19 +57,19 @@ void
 _AddToken(T& cls, const char* name, const TfToken& token)
 {
     cls.add_static_property(name,
-                            boost::python::make_function(
+                            python::make_function(
                                 _WrapStaticToken(&token),
-                                boost::python::return_value_policy<
-                                    boost::python::return_by_value>(),
-                                boost::mpl::vector1<std::string>()));
+                                python::return_value_policy<
+                                    python::return_by_value>(),
+                                mpl::vector1<std::string>()));
 }
 
 } // anonymous
 
 void wrapCodeProcTokens()
 {
-    boost::python::class_<CodeProcTokensType, boost::noncopyable>
-        cls("Tokens", boost::python::no_init);
+    python::class_<CodeProcTokensType, noncopyable>
+        cls("Tokens", python::no_init);
     _AddToken(cls, "codeprocCode", CodeProcTokens->codeprocCode);
     _AddToken(cls, "codeprocMappings", CodeProcTokens->codeprocMappings);
     _AddToken(cls, "codeprocRead", CodeProcTokens->codeprocRead);
