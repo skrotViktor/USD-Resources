@@ -120,16 +120,50 @@ CodeProcCodeProceduralAPI::CreateWorkgroupSizeAttr(VtValue const &defaultValue, 
 }
 
 UsdAttribute
-CodeProcCodeProceduralAPI::GetMappingsAttr() const
+CodeProcCodeProceduralAPI::GetReadWriteNamesAttr() const
 {
-    return GetPrim().GetAttribute(CodeProcTokens->codeprocMappings);
+    return GetPrim().GetAttribute(CodeProcTokens->codeprocReadWriteNames);
 }
 
 UsdAttribute
-CodeProcCodeProceduralAPI::CreateMappingsAttr(VtValue const &defaultValue, bool writeSparsely) const
+CodeProcCodeProceduralAPI::CreateReadWriteNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
-    return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocMappings,
-                       SdfValueTypeNames->String,
+    return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocReadWriteNames,
+                       SdfValueTypeNames->StringArray,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
+}
+
+UsdAttribute
+CodeProcCodeProceduralAPI::GetReadNamesAttr() const
+{
+    return GetPrim().GetAttribute(CodeProcTokens->codeprocReadNames);
+}
+
+UsdAttribute
+CodeProcCodeProceduralAPI::CreateReadNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+    return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocReadNames,
+                       SdfValueTypeNames->StringArray,
+                       /* custom = */ false,
+                       SdfVariabilityVarying,
+                       defaultValue,
+                       writeSparsely);
+}
+
+UsdAttribute
+CodeProcCodeProceduralAPI::GetWriteNamesAttr() const
+{
+    return GetPrim().GetAttribute(CodeProcTokens->codeprocWriteNames);
+}
+
+UsdAttribute
+CodeProcCodeProceduralAPI::CreateWriteNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
+{
+    return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocWriteNames,
+                       SdfValueTypeNames->StringArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -210,7 +244,9 @@ CodeProcCodeProceduralAPI::GetSchemaAttributeNames(bool includeInherited)
 {
     static TfTokenVector localNames = {
         CodeProcTokens->codeprocWorkgroupSize,
-        CodeProcTokens->codeprocMappings,
+        CodeProcTokens->codeprocReadWriteNames,
+        CodeProcTokens->codeprocReadNames,
+        CodeProcTokens->codeprocWriteNames,
         CodeProcTokens->codeprocCode,
     };
     static TfTokenVector allNames =

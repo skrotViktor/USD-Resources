@@ -188,37 +188,69 @@ public:
 
 public:
     // --------------------------------------------------------------------- //
-    // MAPPINGS 
+    // READWRITENAMES 
     // --------------------------------------------------------------------- //
-    /// Settings for each argument input of the opencl kernel in JSON format. The layout of the dictionary should be:
-    /// {
-    /// readWrite: [
-    /// {
-    /// name: argumentName,
-    /// type: SdfValueTypeName.float3,
-    /// isArray: 0,
-    /// },
-    /// ...
-    /// ],
-    /// write: [....]
-    /// }
-    /// 
+    /// Opencl argument names coresponding to the attributes in the readWrite rel
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `string codeproc:mappings` |
-    /// | C++ Type | std::string |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->String |
+    /// | Declaration | `string[] codeproc:readWriteNames` |
+    /// | C++ Type | VtArray<std::string> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
     CODEPROC_API
-    UsdAttribute GetMappingsAttr() const;
+    UsdAttribute GetReadWriteNamesAttr() const;
 
-    /// See GetMappingsAttr(), and also 
+    /// See GetReadWriteNamesAttr(), and also 
     /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
     /// If specified, author \p defaultValue as the attribute's default,
     /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
     /// the default for \p writeSparsely is \c false.
     CODEPROC_API
-    UsdAttribute CreateMappingsAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+    UsdAttribute CreateReadWriteNamesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+
+public:
+    // --------------------------------------------------------------------- //
+    // READNAMES 
+    // --------------------------------------------------------------------- //
+    /// Opencl argument names coresponding to the attributes in the read rel
+    ///
+    /// | ||
+    /// | -- | -- |
+    /// | Declaration | `string[] codeproc:readNames` |
+    /// | C++ Type | VtArray<std::string> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
+    CODEPROC_API
+    UsdAttribute GetReadNamesAttr() const;
+
+    /// See GetReadNamesAttr(), and also 
+    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+    /// If specified, author \p defaultValue as the attribute's default,
+    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+    /// the default for \p writeSparsely is \c false.
+    CODEPROC_API
+    UsdAttribute CreateReadNamesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
+
+public:
+    // --------------------------------------------------------------------- //
+    // WRITENAMES 
+    // --------------------------------------------------------------------- //
+    /// Opencl argument names coresponding to the attributes in the write rel
+    ///
+    /// | ||
+    /// | -- | -- |
+    /// | Declaration | `string[] codeproc:writeNames` |
+    /// | C++ Type | VtArray<std::string> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
+    CODEPROC_API
+    UsdAttribute GetWriteNamesAttr() const;
+
+    /// See GetWriteNamesAttr(), and also 
+    /// \ref Usd_Create_Or_Get_Property for when to use Get vs Create.
+    /// If specified, author \p defaultValue as the attribute's default,
+    /// sparsely (when it makes sense to do so) if \p writeSparsely is \c true -
+    /// the default for \p writeSparsely is \c false.
+    CODEPROC_API
+    UsdAttribute CreateWriteNamesAttr(VtValue const &defaultValue = VtValue(), bool writeSparsely=false) const;
 
 public:
     // --------------------------------------------------------------------- //
@@ -295,6 +327,7 @@ public:
     //  - Close the include guard with #endif
     // ===================================================================== //
     // --(BEGIN CUSTOM CODE)--
+
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

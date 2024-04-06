@@ -66,18 +66,22 @@ struct CodeProcTokensType {
     /// 
     /// CodeProcCodeProceduralAPI
     const TfToken codeprocCode;
-    /// \brief "codeproc:mappings"
-    /// 
-    /// CodeProcCodeProceduralAPI
-    const TfToken codeprocMappings;
     /// \brief "codeproc:read"
     /// 
     /// CodeProcCodeProceduralAPI
     const TfToken codeprocRead;
+    /// \brief "codeproc:readNames"
+    /// 
+    /// CodeProcCodeProceduralAPI
+    const TfToken codeprocReadNames;
     /// \brief "codeproc:readWrite"
     /// 
     /// CodeProcCodeProceduralAPI
     const TfToken codeprocReadWrite;
+    /// \brief "codeproc:readWriteNames"
+    /// 
+    /// CodeProcCodeProceduralAPI
+    const TfToken codeprocReadWriteNames;
     /// \brief "codeproc:workgroupSize"
     /// 
     /// CodeProcCodeProceduralAPI
@@ -86,6 +90,10 @@ struct CodeProcTokensType {
     /// 
     /// CodeProcCodeProceduralAPI
     const TfToken codeprocWrite;
+    /// \brief "codeproc:writeNames"
+    /// 
+    /// CodeProcCodeProceduralAPI
+    const TfToken codeprocWriteNames;
     /// \brief "CodeProceduralAPI"
     /// 
     /// Schema identifer and family for CodeProcCodeProceduralAPI

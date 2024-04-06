@@ -27,19 +27,23 @@ PXR_NAMESPACE_OPEN_SCOPE
 
 CodeProcTokensType::CodeProcTokensType() :
     codeprocCode("codeproc:code", TfToken::Immortal),
-    codeprocMappings("codeproc:mappings", TfToken::Immortal),
     codeprocRead("codeproc:read", TfToken::Immortal),
+    codeprocReadNames("codeproc:readNames", TfToken::Immortal),
     codeprocReadWrite("codeproc:readWrite", TfToken::Immortal),
+    codeprocReadWriteNames("codeproc:readWriteNames", TfToken::Immortal),
     codeprocWorkgroupSize("codeproc:workgroupSize", TfToken::Immortal),
     codeprocWrite("codeproc:write", TfToken::Immortal),
+    codeprocWriteNames("codeproc:writeNames", TfToken::Immortal),
     CodeProceduralAPI("CodeProceduralAPI", TfToken::Immortal),
     allTokens({
         codeprocCode,
-        codeprocMappings,
         codeprocRead,
+        codeprocReadNames,
         codeprocReadWrite,
+        codeprocReadWriteNames,
         codeprocWorkgroupSize,
         codeprocWrite,
+        codeprocWriteNames,
         CodeProceduralAPI
     })
 {

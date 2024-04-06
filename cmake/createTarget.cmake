@@ -52,7 +52,7 @@ function(create_target TARGET)
 
     if (args_INCLUDE_DIRS)
         target_include_directories(${TARGET}
-            PRIVATE
+            PUBLIC
                 ${args_INCLUDE_DIRS}
         )
     endif()

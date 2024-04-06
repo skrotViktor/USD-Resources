@@ -1,12 +1,12 @@
 file(GLOB sources "*.cpp")
 file(GLOB headers "*.h")
 list(FILTER sources EXCLUDE REGEX "./module*|./wrap*")
-file(GLOB py_sources "[module|wrap]*.cpp")
+file(GLOB py_sources "[wrap|module]*.cpp")
 
 find_package(peasyocl REQUIRED)
 
 if (${BUILD_USD_PLUGIN})
-find_package(Python3 REQUIRED)
+    find_package(Python3 REQUIRED)
     set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${USD_INSTALL_ROOT})
     find_package(pxr REQUIRED)
 
@@ -23,7 +23,7 @@ find_package(Python3 REQUIRED)
         INCLUDE_DIRS
             ${PYTHON_INCLUDE_PATH}
             ${PXR_INCLUDE_DIRS}
-            ${peasyocl_INCLUDE_DIR}
+            /opt/peasyocl/include
         LIBS
             ${PXR_LIBRARIES}
             peasyocl

@@ -33,15 +33,11 @@
 #include "pxr/base/tf/pyUtils.h"
 #include "pxr/base/tf/wrapTypeHelpers.h"
 
-#ifdef BUILD_HOUDINI_PLUGIN
-    #include <hboost/python.hpp>
-    using namespace hboost::python;
-#else
-    #include <boost/python.hpp>
-    using namespace boost::python;
-#endif
+#include <boost/python.hpp>
 
 #include <string>
+
+using namespace boost::python;
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -62,10 +58,24 @@ _CreateWorkgroupSizeAttr(CodeProcCodeProceduralAPI &self,
 }
         
 static UsdAttribute
-_CreateMappingsAttr(CodeProcCodeProceduralAPI &self,
+_CreateReadWriteNamesAttr(CodeProcCodeProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
-    return self.CreateMappingsAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->String), writeSparsely);
+    return self.CreateReadWriteNamesAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
+}
+        
+static UsdAttribute
+_CreateReadNamesAttr(CodeProcCodeProceduralAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreateReadNamesAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
+}
+        
+static UsdAttribute
+_CreateWriteNamesAttr(CodeProcCodeProceduralAPI &self,
+                                      object defaultVal, bool writeSparsely) {
+    return self.CreateWriteNamesAttr(
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
 }
         
 static UsdAttribute
@@ -145,10 +155,24 @@ void wrapCodeProcCodeProceduralAPI()
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
         
-        .def("GetMappingsAttr",
-             &This::GetMappingsAttr)
-        .def("CreateMappingsAttr",
-             &_CreateMappingsAttr,
+        .def("GetReadWriteNamesAttr",
+             &This::GetReadWriteNamesAttr)
+        .def("CreateReadWriteNamesAttr",
+             &_CreateReadWriteNamesAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
+        
+        .def("GetReadNamesAttr",
+             &This::GetReadNamesAttr)
+        .def("CreateReadNamesAttr",
+             &_CreateReadNamesAttr,
+             (arg("defaultValue")=object(),
+              arg("writeSparsely")=false))
+        
+        .def("GetWriteNamesAttr",
+             &This::GetWriteNamesAttr)
+        .def("CreateWriteNamesAttr",
+             &_CreateWriteNamesAttr,
              (arg("defaultValue")=object(),
               arg("writeSparsely")=false))
         

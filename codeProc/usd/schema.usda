@@ -55,23 +55,25 @@ class "CodeProceduralAPI"
         doc = """The global workgroup size. If not specified, will use first writeable argument"""
     )
 
-    string codeproc:mappings (
+    string[] codeproc:readWriteNames (
         customData = {
-            string apiName = "mappings"
+            string apiName = "readWriteNames"
         }
-        doc = """Settings for each argument input of the opencl kernel in JSON format. The layout of the dictionary should be:
-        {
-            readWrite: [
-                {
-                    name: argumentName,
-                    type: SdfValueTypeName.float3,
-                    isArray: 0,
-                },
-                ...
-            ],
-            write: [....]
+        doc = """Opencl argument names coresponding to the attributes in the readWrite rel"""
+    )
+
+    string[] codeproc:readNames (
+        customData = {
+            string apiName = "readNames"
         }
-        """
+        doc = """Opencl argument names coresponding to the attributes in the read rel"""
+    )
+
+    string[] codeproc:writeNames (
+        customData = {
+            string apiName = "writeNames"
+        }
+        doc = """Opencl argument names coresponding to the attributes in the write rel"""
     )
 
     string codeproc:code (

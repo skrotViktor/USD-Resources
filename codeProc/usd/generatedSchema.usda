@@ -12,32 +12,26 @@ class "CodeProceduralAPI" (
     string codeproc:code (
         doc = "The opencl kernel code"
     )
-    string codeproc:mappings (
-        doc = """Settings for each argument input of the opencl kernel in JSON format. The layout of the dictionary should be:
-        {
-            readWrite: [
-                {
-                    name: argumentName,
-                    type: SdfValueTypeName.float3,
-                    isArray: 0,
-                },
-                ...
-            ],
-            write: [....]
-        }
-        """
-    )
     rel codeproc:read (
         doc = "The target properties which opencl can only read from"
     )
+    string[] codeproc:readNames (
+        doc = "Opencl argument names coresponding to the attributes in the read rel"
+    )
     rel codeproc:readWrite (
         doc = "The target properties which opencl can read from and write to"
+    )
+    string[] codeproc:readWriteNames (
+        doc = "Opencl argument names coresponding to the attributes in the readWrite rel"
     )
     int codeproc:workgroupSize (
         doc = "The global workgroup size. If not specified, will use first writeable argument"
     )
     rel codeproc:write (
         doc = "The target properties which opencl can only write to"
+    )
+    string[] codeproc:writeNames (
+        doc = "Opencl argument names coresponding to the attributes in the write rel"
     )
 }
 

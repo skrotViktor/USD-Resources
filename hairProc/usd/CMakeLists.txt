@@ -6,10 +6,9 @@ file(GLOB py_sources "[module|wrap]*.cpp")
 find_package(peasyocl REQUIRED)
 
 if (${BUILD_USD_PLUGIN})
-find_package(Python3 REQUIRED)
+    find_package(Python3 REQUIRED)
     set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${USD_INSTALL_ROOT})
     find_package(pxr REQUIRED)
-
     create_target(
             ${USDPLUGIN_NAME}
         PYPACKAGE_NAME
