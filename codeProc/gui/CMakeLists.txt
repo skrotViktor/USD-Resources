@@ -1,4 +1,8 @@
-file(GLOB sources "*.py")
+set(sources
+    dialog.py
+    editor.py
+    __init__.py
+)
 
 get_py_module_name(${USDPLUGIN_NAME} _pyname)
 

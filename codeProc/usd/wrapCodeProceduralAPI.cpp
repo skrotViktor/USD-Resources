@@ -61,21 +61,21 @@ static UsdAttribute
 _CreateReadWriteNamesAttr(CodeProcCodeProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
     return self.CreateReadWriteNamesAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
 }
         
 static UsdAttribute
 _CreateReadNamesAttr(CodeProcCodeProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
     return self.CreateReadNamesAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
 }
         
 static UsdAttribute
 _CreateWriteNamesAttr(CodeProcCodeProceduralAPI &self,
                                       object defaultVal, bool writeSparsely) {
     return self.CreateWriteNamesAttr(
-        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->StringArray), writeSparsely);
+        UsdPythonToSdfType(defaultVal, SdfValueTypeNames->TokenArray), writeSparsely);
 }
         
 static UsdAttribute

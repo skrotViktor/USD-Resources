@@ -1,0 +1,4 @@
+install(
+    FILES hairProc.cl
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/include/ocl
+)

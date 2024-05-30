@@ -1,9 +1,9 @@
+#include "pxr/base/tf/stringUtils.h"
 #include "pxr/imaging/hd/retainedDataSource.h"
 #include "pxr/usdImaging/usdImaging/dataSourceAttribute.h"
-#include "pxr/base/tf/stringUtils.h"
 
-#include "hairProceduralAPIAdapter.h"
 #include "hairProceduralAPI.h"
+#include "hairProceduralAPIAdapter.h"
 #include "hairProceduralSchema.h"
 #include "tokens.h"
 
@@ -15,19 +15,13 @@
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-TF_DEFINE_PRIVATE_TOKENS(
-    _tokens,
-    (hairProcedural)
-    (target)
-    (prim)
-    (paramuv)
-    (rest)
-);
+TF_DEFINE_PRIVATE_TOKENS(_tokens,
+                         (hairProcedural)(target)(prim)(paramuv)(rest));
 
 TF_REGISTRY_FUNCTION(TfType) {
     typedef HairProcHairProceduralAPIAdapter Adapter;
-    TfType t = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter> >();
-    t.SetFactory< UsdImagingAPISchemaAdapterFactory<Adapter> >();
+    TfType t = TfType::Define<Adapter, TfType::Bases<Adapter::BaseAdapter>>();
+    t.SetFactory<UsdImagingAPISchemaAdapterFactory<Adapter>>();
 }
 
 HairProcHairProceduralAPIAdapter::~HairProcHairProceduralAPIAdapter() {}
@@ -35,10 +29,11 @@ HairProcHairProceduralAPIAdapter::~HairProcHairProceduralAPIAdapter() {}
 // DATA SOURCE OVERRIDES
 
 class HairProcHairProceduralTargetDataSource : public HdPathArrayDataSource {
-public:
+  public:
     HD_DECLARE_DATASOURCE(HairProcHairProceduralTargetDataSource);
 
-    HairProcHairProceduralTargetDataSource(const UsdRelationship& rel) : _rel(rel) {}
+    HairProcHairProceduralTargetDataSource(const UsdRelationship &rel)
+        : _rel(rel) {}
 
     VtValue GetValue(HdSampledDataSource::Time shutter) {
         return VtValue(GetTypedValue(shutter));
@@ -51,26 +46,25 @@ public:
     }
 
     bool GetContributingSampleTimesForInterval(
-            HdSampledDataSource::Time startTime,
-            HdSampledDataSource::Time endTime,
-            std::vector<HdSampledDataSource::Time>* outSampleTimes) {
+        HdSampledDataSource::Time startTime, HdSampledDataSource::Time endTime,
+        std::vector<HdSampledDataSource::Time> *outSampleTimes) {
         return false;
     }
 
-private:
+  private:
     UsdRelationship _rel;
 };
 HD_DECLARE_DATASOURCE_HANDLES(HairProcHairProceduralTargetDataSource)
 
-
 class _HairProcHairProceduralDataSource : public HdContainerDataSource {
-public:
+  public:
     HD_DECLARE_DATASOURCE(_HairProcHairProceduralDataSource);
 
     _HairProcHairProceduralDataSource(
-        const UsdPrim& prim,
-        const UsdImagingDataSourceStageGlobals& stageGlobals) : _api(prim), _stageGlobals(stageGlobals) {};
-    
+        const UsdPrim &prim,
+        const UsdImagingDataSourceStageGlobals &stageGlobals)
+        : _api(prim), _stageGlobals(stageGlobals){};
+
     TfTokenVector GetNames() override {
         TfTokenVector result;
         result.reserve(5);
@@ -92,23 +86,20 @@ public:
         return result;
     }
 
-    HdDataSourceBaseHandle Get(const TfToken& name) override {
+    HdDataSourceBaseHandle Get(const TfToken &name) override {
         if (name == _tokens->paramuv) {
             if (UsdAttribute attr = _api.GetParamuvAttr()) {
                 return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
-        }
-        else if (name == _tokens->prim) {
+        } else if (name == _tokens->prim) {
             if (UsdAttribute attr = _api.GetPrimAttr()) {
                 return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
-        }
-        else if (name == _tokens->rest) {
+        } else if (name == _tokens->rest) {
             if (UsdAttribute attr = _api.GetRestAttr()) {
                 return UsdImagingDataSourceAttributeNew(attr, _stageGlobals);
             }
-        }
-        else if (name == _tokens->target) {
+        } else if (name == _tokens->target) {
             if (UsdRelationship rel = _api.GetTargetRel()) {
                 return HairProcHairProceduralTargetDataSource::New(rel);
             }
@@ -116,31 +107,29 @@ public:
         return nullptr;
     }
 
-private:
+  private:
     HairProcHairProceduralAPI _api;
-    const UsdImagingDataSourceStageGlobals& _stageGlobals;
+    const UsdImagingDataSourceStageGlobals &_stageGlobals;
 };
 HD_DECLARE_DATASOURCE_HANDLES(_HairProcHairProceduralDataSource)
 
 // } // close anonymous namespace
 
-
 HdContainerDataSourceHandle
 HairProcHairProceduralAPIAdapter::GetImagingSubprimData(
-        UsdPrim const& prim,
-        TfToken const& subprim,
-        TfToken const& appliedInstanceName,
-        const UsdImagingDataSourceStageGlobals& stageGlobals) {
-    return HdRetainedContainerDataSource::New(_tokens->hairProcedural, _HairProcHairProceduralDataSource::New(prim, stageGlobals));
+    UsdPrim const &prim, TfToken const &subprim,
+    TfToken const &appliedInstanceName,
+    const UsdImagingDataSourceStageGlobals &stageGlobals) {
+    return HdRetainedContainerDataSource::New(
+        _tokens->hairProcedural,
+        _HairProcHairProceduralDataSource::New(prim, stageGlobals));
 }
 
 HdDataSourceLocatorSet
 HairProcHairProceduralAPIAdapter::InvalidateImagingSubprim(
-        UsdPrim const& prim,
-        TfToken const& subprim,
-        TfToken const& appliedInstanceName,
-        TfTokenVector const& properties,
-        const UsdImagingPropertyInvalidationType invalidationType) {
+    UsdPrim const &prim, TfToken const &subprim,
+    TfToken const &appliedInstanceName, TfTokenVector const &properties,
+    const UsdImagingPropertyInvalidationType invalidationType) {
     return HdDataSourceLocatorSet();
 }
 

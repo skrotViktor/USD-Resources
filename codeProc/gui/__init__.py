@@ -5,6 +5,7 @@ class CodeProcPluginContainer(PluginContainer):
 
     def registerPlugins(self, plugRegistry, usdviewApi):
         dial = self.deferredImport(".dialog")
+        print(__file__)
         self._launchPreferences = plugRegistry.registerCommandPlugin(
             "CodeProcPluginContainer.launchPreferences",
             "Launch Preferences",

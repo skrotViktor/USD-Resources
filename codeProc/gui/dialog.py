@@ -7,9 +7,19 @@
 
 from collections import defaultdict
 from pxr.Usdviewq.qt import QtCore, QtGui, QtWidgets
-from pxr import Usd
+from pxr import Usd, Sdf
+from enum import Enum
+
 
 from vik import CodeProc
+from vik.CodeProc.gui import editor
+
+
+class ParmMode(Enum):
+    READ = "read"
+    WRITE = "write"
+    READWRITE = "readWrite"
+
 
 def launchDialog(usdviewApi):
     dial = Dialog(usdviewApi.qMainWindow, usdviewApi)
@@ -21,9 +31,7 @@ class CodeProcItemModel(QtCore.QAbstractTableModel):
         super().__init__(parent)
 
         self._data = []
-
-        self.argModeOptions = ["Read", "Write", "Read + Write"]
-        self.defaultRow = ["", "", self.argModeOptions[0]]
+        self.defaultRow = ["", "", ParmMode.WRITE.value]
 
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
@@ -150,7 +158,9 @@ class ArgComboBoxItemDelegate(QtWidgets.QStyledItemDelegate):
     def createEditor(self, parent, option, index):
         box = QtWidgets.QComboBox(parent)
         
-        box.addItems(index.model().argModeOptions)
+        box.addItems([ParmMode.READ.value,
+                      ParmMode.WRITE.value,
+                      ParmMode.READWRITE.value])
         box.setCurrentText(index.data(QtCore.Qt.ItemDataRole.EditRole))
         box.show()
         self.editing = index.row()
@@ -167,10 +177,32 @@ class ArgComboBoxItemDelegate(QtWidgets.QStyledItemDelegate):
         return super().updateEditorGeometry(editor, option, index)
 
 
+
+class kernelDialog(QtWidgets.QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        
+        layout = QtWidgets.QVBoxLayout()
+        self.textEdit = editor.OpenCLTextEditor(self)
+        self.okButton = QtWidgets.QPushButton("Ok")
+        self.okButton.clicked.connect(self.accept)
+
+        layout.addWidget(self.textEdit)
+        layout.addWidget(self.okButton)
+
+        self.setLayout(layout)
+
+    def setText(self, text):
+        self.textEdit.setText(text)
+    
+    def getText(self):
+        return self.textEdit.toPlainText()
+
+
 class Dialog(QtWidgets.QDialog):
     def __init__(self, parent, api, stage=None):
         super().__init__(parent)
-        
+    
         self.api = api
         if self.api:
             self.stage = self.api.stage
@@ -180,50 +212,93 @@ class Dialog(QtWidgets.QDialog):
         self.verticalLayout = QtWidgets.QVBoxLayout(self)
         self.verticalLayout.setContentsMargins(3,3,3,3)
 
+        self.formSettings = QtWidgets.QFormLayout()
+        self.formSettings.setLabelAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
+        self.formSettings.setFieldGrowthPolicy(self.formSettings.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        self.verticalLayout.addLayout(self.formSettings)
 
         self.loadSelectedPrimButton = QtWidgets.QPushButton("Load Selected Prim", parent=self)
         self.loadSelectedPrimButton.clicked.connect(self.loadSelectedPrim)
-        self.verticalLayout.addWidget(self.loadSelectedPrimButton)
-    
+        self.formSettings.addRow(self.loadSelectedPrimButton)
+
         self.selectedPrim = QtWidgets.QLineEdit(self)
-        self.verticalLayout.addWidget(self.selectedPrim)
+        self.formSettings.addRow("Selected Prim", self.selectedPrim)
 
-        self.addArgButton = QtWidgets.QPushButton("Add Argument", parent=self)
-        self.addArgButton.clicked.connect(self.addArg)
-        self.verticalLayout.addWidget(self.addArgButton)
+        # Global work group size
+        self.workgroupSize = QtWidgets.QComboBox(self)
+        workgroupActions = ["First Writable Primvar", "Primvar", "Custom Size"]
+        self.workgroupSize.addItems(workgroupActions)
+        self.workgroupSize.currentIndexChanged.connect(self.updateWorkGroupWidgets)
+        self.formSettings.addRow("Workgroup Mode", self.workgroupSize)
 
+        self.workgroupPathWidget = QtWidgets.QLineEdit("Path To Property", self)
+        self.formSettings.addRow("Primvar Path", self.workgroupPathWidget)
+        self.formSettings.setRowVisible(3, False)
+
+        self.workgroupSizeWidget = QtWidgets.QSpinBox(self)
+        self.workgroupSizeWidget.setMaximum(2147483647)
+        self.workgroupSizeWidget.setMinimum(0)
+        self.formSettings.addRow("Count", self.workgroupSizeWidget)
+        self.formSettings.setRowVisible(4, False)
+        
+
+        # Kernel arguments
+        self.addParmButton = QtWidgets.QPushButton("Add Parameter", parent=self)
+        self.addParmButton.clicked.connect(self.addParm)
+    
         self.model = CodeProcItemModel(self)
         self.argModeEditor = ArgComboBoxItemDelegate(self)
 
-        self.argsTable = CodeProcItemView(self)
-        self.argsTable.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.AllEditTriggers)
-        self.argsTable.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
+        self.ParmsTable = CodeProcItemView(self)
+        self.ParmsTable.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.AllEditTriggers)
+        self.ParmsTable.setSizePolicy(QtWidgets.QSizePolicy.Policy.Expanding,
                                      QtWidgets.QSizePolicy.Policy.Expanding)
 
-        self.argsTable.setModel(self.model)
-        self.argsTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
-        self.argsTable.setItemDelegateForColumn(2, self.argModeEditor)
-        self.argsTable.verticalHeader().sectionClicked.connect(self.removeArg)
+        self.ParmsTable.setModel(self.model)
+        self.ParmsTable.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
+        self.ParmsTable.setItemDelegateForColumn(2, self.argModeEditor)
+        self.ParmsTable.verticalHeader().sectionClicked.connect(self.removeParm)
 
-        self.verticalLayout.addWidget(self.argsTable)
 
+        # Kernel editor
         self.generateKernelButton = QtWidgets.QPushButton("Geneate Kernel", parent=self)
         self.generateKernelButton.clicked.connect(self.generateKernel)
-        self.verticalLayout.addWidget(self.generateKernelButton)
 
-        self.textEdit = QtWidgets.QTextEdit(parent=self)
+        self.argsWidget = QtWidgets.QWidget(self)
+        self.argsWidgetLayout = QtWidgets.QVBoxLayout()
+        self.argsWidgetLayout.setContentsMargins(0,0,0,0)
+        self.argsWidget.setLayout(self.argsWidgetLayout)
+
+        self.argsWidgetLayout.addWidget(self.addParmButton)
+
+        self.argsWidgetLayout.addWidget(self.ParmsTable)
+        self.argsWidgetLayout.addWidget(self.generateKernelButton)
+
+        self.textEdit = editor.OpenCLTextEditor(self)
         self.textEdit.setMinimumSize(QtCore.QSize(309, 0))
         self.verticalLayout.addWidget(self.textEdit)
+        
+        self.splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical, self)
+        self.splitter.addWidget(self.argsWidget)
+        self.splitter.addWidget(self.textEdit)
+        self.verticalLayout.addWidget(self.splitter)
 
         self.saveButton = QtWidgets.QPushButton("Save", parent=self)
         self.saveButton.clicked.connect(self.saveAttributes)
         self.verticalLayout.addWidget(self.saveButton)
 
+        self.kernelDialog = None
+
         # Fill UI from selected prim
         self.loadSelectedPrim()
+    
+
+    def updateWorkGroupWidgets(self, idx):
+        self.formSettings.setRowVisible(3, idx==1)
+        self.formSettings.setRowVisible(4, idx==2)
 
 
-    def addArg(self, path=None, name=None, mode=None):
+    def addParm(self, path=None, name=None, mode=None):
         row = self.model.rowCount()
         self.model.insertRow(row)
 
@@ -248,7 +323,7 @@ class Dialog(QtWidgets.QDialog):
             self.model.setData(index, mode, QtCore.Qt.ItemDataRole.DisplayRole)
 
 
-    def removeArg(self, row=-1):
+    def removeParm(self, row=-1):
         if row == -1:
             row = self.model.rowCount()-1
         self.model.removeRow(row)
@@ -257,20 +332,19 @@ class Dialog(QtWidgets.QDialog):
     def generateKernel(self):
         kernelUtils = CodeProc.KernelUtils()
         
-        for i in range(self.model.rowCount()):
-            index = self.model.index(i, 0)
-            path = index.data(QtCore.Qt.ItemDataRole.DisplayRole)
-
-            index = self.model.index(i, 1)
-            name = index.data(QtCore.Qt.ItemDataRole.DisplayRole)
-
+        for path, name, mode in self.traverseParms():
             prop = self.stage.GetAttributeAtPath(path)
-            argType = str(prop.GetTypeName().scalarType)
-            isArray = prop.GetTypeName().isArray
-            kernelUtils.addArg(name, argType, isArray)
+            kernelUtils.addArgFromAttribute(prop, name)
 
+        if not self.kernelDialog:
+            self.kernelDialog = kernelDialog(self)
 
-        self.textEdit.setText(kernelUtils.generateKernelCode())
+        self.kernelDialog.setText(kernelUtils.generateKernelCode())
+
+        self.kernelDialog.show()
+        self.kernelDialog.raise_()
+        self.kernelDialog.activateWindow()
+
     
     def loadSelectedPrim(self):
         if self.api:
@@ -278,7 +352,6 @@ class Dialog(QtWidgets.QDialog):
 
         elif self.stage and __name__ == "__main__":
             selectedPrim = self.stage.GetPrimAtPath("/plane")
-
         if not selectedPrim:
             return
 
@@ -292,52 +365,77 @@ class Dialog(QtWidgets.QDialog):
     
         if api.GetReadWriteNamesAttr().Get():
             for path, name in zip(api.GetReadWriteRel().GetForwardedTargets(), api.GetReadWriteNamesAttr().Get()):
-                self.addArg(str(path), name, "ReadWrite")
+                self.addParm(str(path), name, ParmMode.READWRITE.value)
 
         if api.GetReadNamesAttr().Get():
             for path, name in zip(api.GetReadRel().GetForwardedTargets(), api.GetReadNamesAttr().Get()):
-                self.addArg(str(path), name, "Read")
+                self.addParm(str(path), name, ParmMode.READ.value)
 
         if api.GetWriteNamesAttr().Get():
             for path, name in zip(api.GetWriteRel().GetForwardedTargets(), api.GetWriteNamesAttr().Get()):
-                self.addArg(str(path), name, "Write")
+                self.addParm(str(path), name, ParmMode.WRITE.value)
 
         code = api.GetCodeAttr().Get()
         if code:
             self.textEdit.setText(code)
+    
 
-        print(self.model.rowCount())
-
-    def saveAttributes(self):
-        mappings = defaultdict(list)
-        rels = defaultdict(list)
+    def traverseParms(self):
         for i in range(self.model.rowCount()):
             index = self.model.index(i, 0)
             path = index.data(QtCore.Qt.ItemDataRole.DisplayRole)
 
             index = self.model.index(i, 1)
             name = index.data(QtCore.Qt.ItemDataRole.DisplayRole)
+            if not name:
+                name = path.split(".")[-1]
             
             index = self.model.index(i, 2)
             mode = index.data(QtCore.Qt.ItemDataRole.DisplayRole)
 
+            yield path, name, mode
+    
+
+    def parseWorkGroupSize(self):
+        idx = self.workgroupSize.currentIndex()
+        if idx == 0:
+            for path, name, mode in self.traverseParms():
+                modeEnum = ParmMode(mode)
+                if modeEnum is ParmMode.WRITE or modeEnum is ParmMode.READWRITE:
+                    prop = self.stage.GetPropertyAtPath(path)
+                    return len(prop.Get())
+        if idx == 1:
+            path = self.workgroupPathWidget.text()
+            prop = self.stage.GetPropertyAtPath(path)
+            return len(prop.Get())
+
+        return self.workgroupSizeWidget.value()
+
+
+    def saveAttributes(self):
+        mappings = defaultdict(list)
+        rels = defaultdict(list)
+        for path, name, mode in self.traverseParms():
             mappings[mode].append(name)
             rels[mode].append(path)
+
+        # layer = Sdf.Layer.CreateAnonymous("poopopopooo")
 
         prim = self.stage.GetPrimAtPath(self.selectedPrim.text())
         api = CodeProc.CodeProceduralAPI(prim)
 
-        api.CreateReadWriteRel().SetTargets(rels["Read + Write"])
-        api.CreateWriteRel().SetTargets(rels["Write"])
-        api.CreateReadRel().SetTargets(rels["Read"])
+        api.CreateReadWriteRel().SetTargets(rels[ParmMode.READWRITE.value])
+        api.CreateWriteRel().SetTargets(rels[ParmMode.WRITE.value])
+        api.CreateReadRel().SetTargets(rels[ParmMode.READ.value])
 
-        api.CreateReadWriteNamesAttr().Set(mappings["Read + Write"])
-        api.CreateWriteNamesAttr().Set(mappings["Write"])
-        api.CreateReadNamesAttr().Set(mappings["Read"])
+        api.CreateReadWriteNamesAttr().Set(mappings[ParmMode.READWRITE.value])
+        api.CreateWriteNamesAttr().Set(mappings[ParmMode.WRITE.value])
+        api.CreateReadNamesAttr().Set(mappings[ParmMode.READ.value])
 
         api.CreateCodeAttr().Set(self.textEdit.toPlainText())
+        api.CreateWorkgroupSizeAttr().Set(self.parseWorkGroupSize())
 
-        self.stage.Export(os.path.join(os.path.dirname(__file__), "../testenv/codeProc.usda"))
+        self.stage.Export(self.stage.GetRootLayer().resolvedPath)
 
 
 if __name__ == "__main__":

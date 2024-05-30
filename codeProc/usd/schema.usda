@@ -55,21 +55,21 @@ class "CodeProceduralAPI"
         doc = """The global workgroup size. If not specified, will use first writeable argument"""
     )
 
-    string[] codeproc:readWriteNames (
+    token[] codeproc:readWriteNames (
         customData = {
             string apiName = "readWriteNames"
         }
         doc = """Opencl argument names coresponding to the attributes in the readWrite rel"""
     )
 
-    string[] codeproc:readNames (
+    token[] codeproc:readNames (
         customData = {
             string apiName = "readNames"
         }
         doc = """Opencl argument names coresponding to the attributes in the read rel"""
     )
 
-    string[] codeproc:writeNames (
+    token[] codeproc:writeNames (
         customData = {
             string apiName = "writeNames"
         }

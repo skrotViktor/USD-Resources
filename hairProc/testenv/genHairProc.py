@@ -251,12 +251,12 @@ def do_stuffs(stage):
     Build the stage for testing hair procedural
     """
     tube = build_tube(stage, "/tube", rows=5, columns=10, height=10, caps=True)
-    plane1 = build_plane(stage, "/plane1",  w=5, h=5, pos=(10,0,0))
+    plane1 = build_plane(stage, "/plane1",  w=5, h=5, pos=(0,0,0))
     plane2 = build_plane(stage, "/plane2",  w=5, h=5, pos=(20,0,0))
     
-    build_hair(stage, tube, count=100000, path="/curves1")
-    build_hair(stage, plane1, count=100000, path="/curves2")
-    build_hair(stage, plane2, count=100000, path="/curves3")
+    build_hair(stage, tube, count=1000, path="/curves1")
+    build_hair(stage, plane1, count=1000, path="/curves2")
+    build_hair(stage, plane2, count=1000, path="/curves3")
 
     twist(stage, tube, nframes=200, speed=0.01)
     transform_pts(stage, plane1, nframes=200)

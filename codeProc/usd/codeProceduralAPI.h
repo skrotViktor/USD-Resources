@@ -31,13 +31,13 @@
 #include "pxr/usd/usd/apiSchemaBase.h"
 #include "pxr/usd/usd/prim.h"
 #include "pxr/usd/usd/stage.h"
-#include "./tokens.h"
+#include "./tokens.h" // IWYU pragma: keep
 
 #include "pxr/base/vt/value.h"
 
-#include "pxr/base/gf/vec3d.h"
-#include "pxr/base/gf/vec3f.h"
-#include "pxr/base/gf/matrix4d.h"
+#include "pxr/base/gf/vec3d.h" // IWYU pragma: keep
+#include "pxr/base/gf/vec3f.h" // IWYU pragma: keep
+#include "pxr/base/gf/matrix4d.h" // IWYU pragma: keep
 
 #include "pxr/base/tf/token.h"
 #include "pxr/base/tf/type.h"
@@ -194,9 +194,9 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `string[] codeproc:readWriteNames` |
-    /// | C++ Type | VtArray<std::string> |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
+    /// | Declaration | `token[] codeproc:readWriteNames` |
+    /// | C++ Type | VtArray<TfToken> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->TokenArray |
     CODEPROC_API
     UsdAttribute GetReadWriteNamesAttr() const;
 
@@ -216,9 +216,9 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `string[] codeproc:readNames` |
-    /// | C++ Type | VtArray<std::string> |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
+    /// | Declaration | `token[] codeproc:readNames` |
+    /// | C++ Type | VtArray<TfToken> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->TokenArray |
     CODEPROC_API
     UsdAttribute GetReadNamesAttr() const;
 
@@ -238,9 +238,9 @@ public:
     ///
     /// | ||
     /// | -- | -- |
-    /// | Declaration | `string[] codeproc:writeNames` |
-    /// | C++ Type | VtArray<std::string> |
-    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->StringArray |
+    /// | Declaration | `token[] codeproc:writeNames` |
+    /// | C++ Type | VtArray<TfToken> |
+    /// | \ref Usd_Datatypes "Usd Type" | SdfValueTypeNames->TokenArray |
     CODEPROC_API
     UsdAttribute GetWriteNamesAttr() const;
 
@@ -328,6 +328,8 @@ public:
     // ===================================================================== //
     // --(BEGIN CUSTOM CODE)--
 
+    CODEPROC_API
+    void CompileArgumentAPIAdapter() const;
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

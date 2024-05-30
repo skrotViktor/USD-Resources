@@ -3,16 +3,18 @@ Tf.PreparePythonModule()
 del Tf
 
 
-
 class KernelUtils:
     templateKernel = \
-"""
-// Defines
+"""// Defines
+// Toggle support for double and half types. Set 'enable' or 'disable'
+#pragma OPENCL EXTENSION cl_khr_fp16 : enable \n\
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable \n\
 {}
 
 // Includes
 #include "usdTypes.h"
 {}
+
 
 __kernel void {} (
 {}
@@ -41,7 +43,7 @@ __kernel void {} (
 
     def addArgFromAttribute(self, attribute, argName):
         tn = attribute.GetTypeName()
-        argType = str(tn)
+        argType = tn.scalarType.type.typeName
         argIsArray = tn.isArray
         self.addArg(argName, argType, argIsArray)
 
@@ -61,7 +63,7 @@ __kernel void {} (
             definesStr += f"#define {d} \n"
             definesStr += f"#endif \n"
         
-        includeStr = "#include <usdTypeDefs.h>"
+        includeStr = ""
         for i in self.includes:
             includeStr += f"#include {i} \n"
 
@@ -69,10 +71,10 @@ __kernel void {} (
         args = f"{indent}const int globalSize,"
         for name, argtype, isArray in zip(self._argNames, self._argTypes, self._argIsArrays):
             if isArray:
-                args += f"\n{indent}global int* {name}_indices,"
-                args += f"\n{indent}global int* {name}_lengths,"
+                args += f"\n{indent}__global int* {name}_indices,"
+                args += f"\n{indent}__global int* {name}_lengths,"
 
-            args += f"\n{indent}global {argtype}* {name},"
+            args += f"\n{indent}__global {argtype}* {name},"
         
         args = args[:-1]
 

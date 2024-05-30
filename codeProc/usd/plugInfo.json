@@ -15,6 +15,20 @@
                             "UsdAPISchemaBase"
                         ], 
                         "schemaKind": "singleApplyAPI"
+                    }, 
+                    "CodeProcCodeProceduralAPIAdapter": {
+                        "apiSchemaName": "CodeProceduralAPI", 
+                        "bases": [
+                            "UsdImagingAPISchemaAdapter"
+                        ]
+                    }, 
+                    "CodeProcCodeProceduralSceneIndexPlugin": {
+                        "bases": [
+                            "HdSceneIndexPlugin"
+                        ], 
+                        "displayName": "Scene Index to execute CodeProc", 
+                        "loadWithRenderer": "", 
+                        "priority": 1
                     }
                 }
             }, 
@@ -31,7 +45,7 @@
                         "bases": [
                             "pxr.Usdviewq.plugin.PluginContainer"
                         ], 
-                        "displayName": "Ocean Simulator Plugin"
+                        "displayName": "Code Procedural plugin"
                     }
                 }
             }, 

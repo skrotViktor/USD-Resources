@@ -1,29 +1,26 @@
-#ifndef HAIRPROC_PROCEDURALAPIADAPTER_H
-#define HAIRPROC_PROCEDURALAPIADAPTER_H
+#ifndef CODEPROC_PROCEDURALAPIADAPTER_H
+#define CODEPROC_PROCEDURALAPIADAPTER_H
 
+#include "api.h"
 #include "pxr/pxr.h"
 #include "pxr/usdImaging/usdImaging/apiSchemaAdapter.h"
 
-#include "api.h"
-
-#include <iostream>
-
 PXR_NAMESPACE_OPEN_SCOPE
 
-class HairProcHairProceduralAPIAdapter : public UsdImagingAPISchemaAdapter {
+class CodeProcCodeProceduralAPIAdapter : public UsdImagingAPISchemaAdapter {
   public:
-    HAIRPROC_API
-    ~HairProcHairProceduralAPIAdapter() override;
+    CODEPROC_API
+    ~CodeProcCodeProceduralAPIAdapter() override;
 
     using BaseAdapter = UsdImagingAPISchemaAdapter;
 
-    HAIRPROC_API
+    CODEPROC_API
     HdContainerDataSourceHandle GetImagingSubprimData(
         UsdPrim const &prim, TfToken const &subprim,
         TfToken const &appliedInstanceName,
         const UsdImagingDataSourceStageGlobals &stageGlobals) override;
 
-    HAIRPROC_API
+    CODEPROC_API
     HdDataSourceLocatorSet InvalidateImagingSubprim(
         UsdPrim const &prim, TfToken const &subprim,
         TfToken const &appliedInstanceName, TfTokenVector const &properties,

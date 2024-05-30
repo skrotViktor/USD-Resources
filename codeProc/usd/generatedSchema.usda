@@ -15,13 +15,13 @@ class "CodeProceduralAPI" (
     rel codeproc:read (
         doc = "The target properties which opencl can only read from"
     )
-    string[] codeproc:readNames (
+    token[] codeproc:readNames (
         doc = "Opencl argument names coresponding to the attributes in the read rel"
     )
     rel codeproc:readWrite (
         doc = "The target properties which opencl can read from and write to"
     )
-    string[] codeproc:readWriteNames (
+    token[] codeproc:readWriteNames (
         doc = "Opencl argument names coresponding to the attributes in the readWrite rel"
     )
     int codeproc:workgroupSize (
@@ -30,7 +30,7 @@ class "CodeProceduralAPI" (
     rel codeproc:write (
         doc = "The target properties which opencl can only write to"
     )
-    string[] codeproc:writeNames (
+    token[] codeproc:writeNames (
         doc = "Opencl argument names coresponding to the attributes in the write rel"
     )
 }

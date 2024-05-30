@@ -1,17 +1,15 @@
-#ifndef HAIRPROC_PROCEDURAL_SCENEINDEX_PLUGIN_H
-#define HAIRPROC_PROCEDURAL_SCENEINDEX_PLUGIN_H
-
-#include "./tokens.h"
+#ifndef CODEPROC_PROCEDURAL_SCENEINDEX_PLUGIN_H
+#define CODEPROC_PROCEDURAL_SCENEINDEX_PLUGIN_H
 
 #include "pxr/imaging/hd/sceneIndexPlugin.h"
 #include "pxr/pxr.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
-class HairProcHairProceduralSceneIndexPlugin : public HdSceneIndexPlugin {
+class CodeProcCodeProceduralSceneIndexPlugin : public HdSceneIndexPlugin {
   public:
-    HairProcHairProceduralSceneIndexPlugin();
-    ~HairProcHairProceduralSceneIndexPlugin() override;
+    CodeProcCodeProceduralSceneIndexPlugin();
+    ~CodeProcCodeProceduralSceneIndexPlugin() override;
 
   protected:
     HdSceneIndexBaseRefPtr

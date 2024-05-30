@@ -1,12 +1,37 @@
-file(GLOB sources "*.cpp")
-file(GLOB headers "*.h")
-list(FILTER sources EXCLUDE REGEX "./module*|./wrap*")
-file(GLOB py_sources "[wrap|module]*.cpp")
+set(sources 
+    codeProceduralAPI.cpp
+    codeProceduralAPIAdapter.cpp
+    codeProceduralDataSources.cpp
+    codeProceduralDeformer.cpp
+    codeProceduralSceneIndex.cpp
+    codeProceduralSceneIndexPlugin.cpp
+    codeProceduralSchema.cpp
+    tokens.cpp
+)
+
+set(headers
+    codeProceduralAPI.h
+    codeProceduralAPIAdapter.h
+    codeProceduralDataSources.h
+    codeProceduralDeformer.h
+    codeProceduralSceneIndex.h
+    codeProceduralSceneIndexPlugin.h
+    codeProceduralSchema.h
+    codeProceduralDeformerArguments.h
+    tokens.h
+)
+
+set(py_sources
+    wrapCodeProceduralAPI.cpp
+    wrapTokens.cpp
+    module.cpp
+    moduleDeps.cpp
+)
 
 find_package(peasyocl REQUIRED)
 
 if (${BUILD_USD_PLUGIN})
-    find_package(Python3 REQUIRED)
+    # find_package(Python3 REQUIRED)
     set(CMAKE_FIND_PACKAGE_REDIRECTS_DIR ${USD_INSTALL_ROOT})
     find_package(pxr REQUIRED)
 

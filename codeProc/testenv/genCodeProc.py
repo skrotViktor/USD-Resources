@@ -29,12 +29,43 @@ def build_plane(stage, name="/plane", w=2, h=2, pos=(0,0,0)):
     return mesh
 
 
+def transform_pts(stage, prim, nframes=10, speed=0.1):
+    """
+    Transforms each point idividually.
+    """
+    frames = range(nframes)
+    stage.SetStartTimeCode(frames[0])
+    stage.SetEndTimeCode(frames[-1])
+    stage.SetFramesPerSecond(24)
+
+    pts_attr = prim.GetPointsAttr()
+    pts = np.array(pts_attr.Get())
+
+    pts_attr.Set(pts, frames[0])
+
+    def _func(v, t):
+        x = v[0] * np.cos(t) - v[2] * np.sin(t)
+        y = v[1]
+        z = v[0] * np.sin(t) + v[2] * np.cos(t)
+        return np.array((x, y, z))
+
+    vf = np.vectorize(_func, signature="(n)->(n)")
+    vf.excluded.add("t")
+
+    for f in frames:
+        pts = vf(v=pts, t=speed)
+        pts += np.array((np.sin(f / nframes) * speed, 0, np.cos(f / nframes) * speed))
+        pts_attr.Set(pts, f)
+
+
 def do_stuffs(stage):
     """
     Build the stage for testing hair procedural
     """
-    plane = build_plane(stage, "/plane",  w=5, h=5)
-    api = CodeProc.CodeProceduralAPI.Apply(plane.GetPrim())
+    plane0 = build_plane(stage, "/plane0",  w=5, h=5)
+    plane1 = build_plane(stage, "/plane1",  w=5, h=5)
+    transform_pts(stage, plane1, 20)
+    CodeProc.CodeProceduralAPI.Apply(plane0.GetPrim())
 
 
 if __name__ == "__main__":

@@ -19,8 +19,4 @@ endif()
 
 # The subdirectories defines our actual library targets
 add_subdirectory(usd)
-
-install(DIRECTORY
-    kernels
-    DESTINATION ocl
-)
+add_subdirectory(ocl)

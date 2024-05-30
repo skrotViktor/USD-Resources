@@ -26,7 +26,6 @@
 #include "pxr/usd/usd/typed.h"
 
 #include "pxr/usd/sdf/types.h"
-#include "pxr/usd/sdf/assetPath.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -129,7 +128,7 @@ UsdAttribute
 CodeProcCodeProceduralAPI::CreateReadWriteNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
     return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocReadWriteNames,
-                       SdfValueTypeNames->StringArray,
+                       SdfValueTypeNames->TokenArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -146,7 +145,7 @@ UsdAttribute
 CodeProcCodeProceduralAPI::CreateReadNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
     return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocReadNames,
-                       SdfValueTypeNames->StringArray,
+                       SdfValueTypeNames->TokenArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -163,7 +162,7 @@ UsdAttribute
 CodeProcCodeProceduralAPI::CreateWriteNamesAttr(VtValue const &defaultValue, bool writeSparsely) const
 {
     return UsdSchemaBase::_CreateAttr(CodeProcTokens->codeprocWriteNames,
-                       SdfValueTypeNames->StringArray,
+                       SdfValueTypeNames->TokenArray,
                        /* custom = */ false,
                        SdfVariabilityVarying,
                        defaultValue,
@@ -270,3 +269,15 @@ PXR_NAMESPACE_CLOSE_SCOPE
 // 'PXR_NAMESPACE_OPEN_SCOPE', 'PXR_NAMESPACE_CLOSE_SCOPE'.
 // ===================================================================== //
 // --(BEGIN CUSTOM CODE)--
+
+PXR_NAMESPACE_OPEN_SCOPE
+
+void CodeProcCodeProceduralAPI::CompileArgumentAPIAdapter() const {
+    // Get read, write, readWrite relationship targets
+
+    // Get target value types
+
+    // Setup 
+}
+
+PXR_NAMESPACE_CLOSE_SCOPE

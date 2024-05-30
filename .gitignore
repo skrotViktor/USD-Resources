@@ -1,0 +1,12 @@
+*.DS_Store
+*.vscode
+build
+.venv
+.env
+.clang-format
+.cache
+
+*/testenv/render
+*/testenv/*.usda
+
+__pycache__
